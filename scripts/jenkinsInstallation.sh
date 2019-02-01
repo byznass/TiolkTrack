@@ -15,7 +15,7 @@ sudo docker run -d --rm --name jenkinsci-byznass -u root -p 8080:8080 -p 50000:5
 
 wget -O jenkinsBackUp.sh https://raw.githubusercontent.com/byznass/TiolkTrack/master/scripts/jenkinsBackUp.sh
 
-printf "#!/bin/bash\n\nbucketName=$bucketName\njenkinsDataFolder=$jenkinsDataFolder\n\n" | cat - jenkinsBackUp.sh > temp && mv temp jenkinsBackUp
+printf "#!/bin/bash\n\nbucketName='$bucketName'\njenkinsDataFolder='$jenkinsDataFolder'\n\n" | cat - jenkinsBackUp.sh > temp && mv temp jenkinsBackUp
 
 chmod +x jenkinsBackUp
 
