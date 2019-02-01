@@ -1,7 +1,7 @@
 #!/bin/bash
 
-bucketName='clei'
-jenkinsDataFolder='121'
+bucketName=''
+jenkinsDataFolder=''
 
 ####################################################################################
 
@@ -9,7 +9,7 @@ wget https://raw.githubusercontent.com/byznass/jenkinsci-byznass/master/Dockerfi
 
 sudo docker build -t jenkinsci/byznass -f Dockerfile .
 
-sudo docker run -d --rm --name jenkinsci/byznass -u root -p 8080:8080 -p 50000:50000 -v /home/byznass_group/byznass/TiolkTrack/jenkinsci-byznass/data:/var/jenkins_home -v /var/run/docker.sock:/var/run/docker.sock jenkinsci/byznass
+sudo docker run -d --rm --name jenkinsci-byznass -u root -p 8080:8080 -p 50000:50000 -v /home/byznass_group/byznass/TiolkTrack/jenkinsci-byznass/data:/var/jenkins_home -v /var/run/docker.sock:/var/run/docker.sock jenkinsci/byznass
 
 ####################################################################################
 
@@ -17,6 +17,6 @@ wget -O jenkinsBackUp.sh https://raw.githubusercontent.com/byznass/TiolkTrack/ma
 
 printf "#!/bin/bash\n\nbucketName=$bucketName\n\n" | cat - jenkinsBackUp.sh > temp && mv temp jenkinsBackUp
 
-chmod +x jenkinsBackup
+chmod +x jenkinsBackUp
 
-sudo cp jenkinsBackup /etc/cron.daily/
+sudo cp jenkinsBackUp /etc/cron.daily/
