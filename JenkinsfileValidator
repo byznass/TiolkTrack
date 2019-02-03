@@ -1,0 +1,33 @@
+#!/usr/bin/env groovy
+
+node{
+
+	checkout scm
+
+	try{
+		stage('SonarQube analysis') {
+			withSonarQubeEnv('sonarqube-byznass') {
+				withCredentials([
+						string(credentialsId: 'sonarqube-byznass_token', variable: 'SONAR_LOGIN'),
+						string(credentialsId: 'github-token', variable: 'GITHUB_TOKEN')
+				]) {
+
+					// It's important to add --info because of SONARJNKNS-281
+					sh '''
+						PR_ID=$(echo $BRANCH_NAME | cut -d '-' -f 2)
+
+						./gradlew --info sonarqube \
+						-Dsonar.projectKey=TiolkTrack \
+						-Dsonar.projectName=TiolkTrack \
+						-Dsonar.analysis.mode=preview \
+						-Dsonar.login=$SONAR_LOGIN \
+						-Dsonar.github.oauth=$GITHUB_TOKEN \
+						-Dsonar.github.repository=byznass/TiolkTrack \
+						-Dsonar.github.pullRequest=$PR_ID
+					'''
+				}
+			}
+		}
+	} finally{
+	}
+}
