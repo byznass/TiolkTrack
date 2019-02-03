@@ -15,14 +15,17 @@ node{
                     // It's important to add --info because of SONARJNKNS-281
                     sh '''
 						PR_ID=$(echo $BRANCH_NAME | cut -d '-' -f 2)
+
 						./gradlew --info sonarqube \
-						-Dsonar.analysis.mode=preview \
 						-Dsonar.projectKey=TiolkTrack \
 						-Dsonar.projectName=TiolkTrack \
-						-Dsonar.login=$SONAR_LOGIN \
-						-Dsonar.github.oauth=$GITHUB_TOKEN \
+						-Dsonar.analysis.mode=preview \
+						-Dsonar.github.pullRequest=$PR_ID \
 						-Dsonar.github.repository=byznass/TiolkTrack \
-						-Dsonar.github.pullRequest=$PR_ID
+						-Dsonar.github.oauth=$GITHUB_TOKEN \
+						-Dsonar.host.url=http://sonarqube.tiolktrack.byznass.com:9000 \
+						-Dsonar.login=$SONAR_LOGIN \
+						-Dsonar.github.disableInlineComments=false
 					'''
                 }
             }
