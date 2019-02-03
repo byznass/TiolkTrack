@@ -16,7 +16,7 @@ node{
 					sh '''
 						PR_ID=$(echo $BRANCH_NAME | cut -d '-' -f 2)
 
-						./gradlew --info sonarqube \
+						./gradlew --debug sonarqube \
 						-Dsonar.projectKey=TiolkTrack \
 						-Dsonar.projectName=TiolkTrack \
 						-Dsonar.login=$SONAR_LOGIN \
