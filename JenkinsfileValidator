@@ -17,9 +17,9 @@ node{
 						PR_ID=$(echo $BRANCH_NAME | cut -d '-' -f 2)
 
 						./gradlew --info sonarqube \
-						-Dsonar.analysis.mode=preview \
 						-Dsonar.projectKey=TiolkTrack \
 						-Dsonar.projectName=TiolkTrack \
+						-Dsonar.analysis.mode=preview 
 						-Dsonar.login=$SONAR_LOGIN \
 						-Dsonar.github.oauth=$GITHUB_TOKEN \
 						-Dsonar.github.repository=byznass/TiolkTrack \
