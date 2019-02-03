@@ -13,7 +13,7 @@ node{
 
 					// It's important to add --info because of SONARJNKNS-281
 					sh '''
-						./gradlew --debug sonarqube \
+						./gradlew --info sonarqube \
 						-Dsonar.projectKey=TiolkTrack \
 						-Dsonar.projectName=TiolkTrack \
 						-Dsonar.login=$SONAR_LOGIN
