@@ -19,7 +19,7 @@ node{
 						./gradlew --info sonarqube \
 						-Dsonar.projectKey=TiolkTrack \
 						-Dsonar.projectName=TiolkTrack \
-						-Dsonar.analysis.mode=preview 
+						-Dsonar.analysis.mode=preview \
 						-Dsonar.login=$SONAR_LOGIN \
 						-Dsonar.github.oauth=$GITHUB_TOKEN \
 						-Dsonar.github.repository=byznass/TiolkTrack \
