@@ -18,7 +18,7 @@ rm "$backupName"
 
 wget https://raw.githubusercontent.com/byznass/jenkinsci-byznass/master/Dockerfile
 sudo docker build -t jenkinsci/byznass -f Dockerfile .
-sudo docker run -d --rm --name jenkinsci-byznass -u root -p 8080:8080 -p 50000:50000 -v "$jenkinsDataFolder"/data:/var/jenkins_home -v /var/run/docker.sock:/var/run/docker.sock jenkinsci/byznass
+sudo docker run -d --name jenkinsci-byznass -u root -p 8080:8080 -p 50000:50000 -v "$jenkinsDataFolder"/data:/var/jenkins_home -v /var/run/docker.sock:/var/run/docker.sock jenkinsci/byznass
 
 ####################################################################################
 
