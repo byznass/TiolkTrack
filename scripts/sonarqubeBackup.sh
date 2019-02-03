@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # !!! in /etc/cron.daily this script need to be without ".sh" extension 
 
 sonarqubeDataFolder=''
