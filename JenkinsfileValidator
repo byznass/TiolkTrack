@@ -8,8 +8,7 @@ node{
 		stage('SonarQube analysis') {
 			withSonarQubeEnv('sonarqube-byznass') {
 				withCredentials([
-						string(credentialsId: 'sonarqube-byznass_login', variable: 'SONAR_LOGIN'),
-						string(credentialsId: 'sonarqube-byznass_pass', variable: 'SONAR_PASS'),
+						string(credentialsId: 'sonarqube-byznass_token', variable: 'SONAR_LOGIN')
 				]) {
 
 					// It's important to add --info because of SONARJNKNS-281
@@ -17,9 +16,7 @@ node{
 						./gradlew --info sonarqube \
 						-Dsonar.projectKey=TiolkTrack \
 						-Dsonar.projectName=TiolkTrack \
-						-Dsonar.login=$SONAR_LOGIN \
-						-Dsonar.password=$SONAR_PASS \
-						-Dsonar.analysis.mode=issues
+						-Dsonar.login=$SONAR_LOGIN
 					'''
 				}
 			}
