@@ -5,6 +5,11 @@ node{
     checkout scm
 
     try{
+
+        stage('Test'){
+            sh './gradlew cleanTest test jacocoMerge'
+        }
+
         stage('SonarQube analysis') {
             withSonarQubeEnv('sonarqube-byznass') {
                 withCredentials([
@@ -24,5 +29,7 @@ node{
             }
         }
     } finally{
+        junit '**/build/test-results/**/*.xml'
+        jacoco execPattern: '**/coverageForAllTests.exec'
     }
 }
