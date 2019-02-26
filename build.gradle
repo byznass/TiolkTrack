@@ -9,3 +9,40 @@ sourceCompatibility = 1.8
 repositories {
     mavenCentral()
 }
+
+dependencies {
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+def fileWithCoverageForAllTests = "$buildDir/jacoco/coverageForAllTests.exec"
+
+allprojects {
+    apply plugin: 'jacoco'
+
+    jacoco {
+        toolVersion = "0.8.2"
+        reportsDir = file(fileWithCoverageForAllTests)
+    }
+
+    sonarqube {
+        properties {
+            property "sonar.jacoco.reportPath", fileWithCoverageForAllTests
+        }
+    }
+}
+
+jacocoTestReport{
+    executionData = project.fileTree(dir: '.', include:'**/build/jacoco/*.exec')
+    classDirectories = project.fileTree(dir: '.', include:'**/build/classes/main/**/*', excludes: [])
+    sourceDirectories = project.fileTree(dir: '.', include:'**/src/main/java/**/*')
+}
+
+task jacocoMergeTest(type: JacocoMerge) {
+    destinationFile = file(fileWithCoverageForAllTests)
+    executionData = project.fileTree(dir: '.', include:'**/build/jacoco/test.exec')
+}
+
+task jacocoMerge(dependsOn: ['jacocoMergeTest']) {
+
+    // used to run the other merge tasks
+}
