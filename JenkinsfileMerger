@@ -10,11 +10,11 @@ node{
             sh './gradlew cleanTest test jacocoMerge'
         }
 
-        stage('SonarQube analysis') {
+        stage('sonarqube analysis') {
             withSonarQubeEnv('sonarqube-byznass') {
                 withCredentials([
                         string(credentialsId: 'sonarqube-byznass_token', variable: 'SONAR_LOGIN'),
-                        string(credentialsId: 'github-token', variable: 'GITHUB_TOKEN')
+                        string(credentialsId: 'github-token-sonarqube', variable: 'GITHUB_TOKEN')
                 ]) {
 
                     // It's important to add --info because of SONARJNKNS-281
@@ -26,6 +26,23 @@ node{
 						-Dsonar.login=$SONAR_LOGIN
 					'''
                 }
+            }
+        }
+
+        //https://stackoverflow.com/questions/45355007/how-to-authenticate-with-a-google-service-account-in-jenkins-pipeline
+        stage('k8s deployment'){
+            withCredentials([file(credentialsId: 'jenkins-to-k8s', variable: 'GC_KEY')]) {
+                sh 'rm -r /root/google-cloud-sdk'
+                sh 'curl https://sdk.cloud.google.com | bash > /dev/null;'
+                sh '''#!/bin/bash
+                     source $HOME/google-cloud-sdk/path.bash.inc
+                     gcloud components update kubectl
+                     gcloud auth activate-service-account --key-file=${GC_KEY}
+                     gcloud config set project tiolktrack-1548605545784
+                     gcloud config set compute/zone europe-north1-c
+                     gcloud container clusters get-credentials byznass-cluster
+                     kubectl get services
+                '''
             }
         }
     } finally{
