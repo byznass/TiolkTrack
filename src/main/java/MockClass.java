@@ -1,5 +1,3 @@
-import com.sun.istack.internal.Nullable;
-
 import java.util.Optional;
 
 public class MockClass {
@@ -16,7 +14,6 @@ public class MockClass {
         }
     }
 
-    @Nullable // Noncompliant
     public Optional<String> getOptional() {
         // ...
         return null;  // Noncompliant
