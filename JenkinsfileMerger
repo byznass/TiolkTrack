@@ -33,7 +33,8 @@ node{
         stage('k8s deployment'){
             withCredentials([file(credentialsId: 'jenkins-to-k8s', variable: 'GC_KEY')]) {
                 sh '''#!/bin/bash
-                    if [ -d /root/google-cloud-sdk ] ; then rm -rf /root/google-cloud-sdk; fi'''
+                    if [ -d /root/google-cloud-sdk ] ; then rm -rf /root/google-cloud-sdk; fi
+                '''
                 sh 'curl https://sdk.cloud.google.com | bash > /dev/null;'
                 sh '''#!/bin/bash
                     source $HOME/google-cloud-sdk/path.bash.inc
