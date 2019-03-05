@@ -39,7 +39,8 @@ node{
                 sh 'curl https://sdk.cloud.google.com | bash > /dev/null;'
                 sh '''#!/bin/bash
                     source $HOME/google-cloud-sdk/path.bash.inc
-                    gcloud components update kubectlgcloud auth activate-service-account --key-file=${GC_KEY}
+                    gcloud components update kubectl
+                    gcloud auth activate-service-account --key-file=${GC_KEY}
                     gcloud config set project tiolktrack-1548605545784
                     gcloud config set compute/zone europe-north1-c
                     gcloud container clusters get-credentials byznass-cluster
