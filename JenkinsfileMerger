@@ -32,7 +32,7 @@ node{
         //https://stackoverflow.com/questions/45355007/how-to-authenticate-with-a-google-service-account-in-jenkins-pipeline
         stage('k8s deployment'){
             withCredentials([file(credentialsId: 'jenkins-to-k8s', variable: 'GC_KEY')]) {
-                sh 'rm -r /root/google-cloud-sdk'
+                //sh 'rm -r /root/google-cloud-sdk'
                 sh 'curl https://sdk.cloud.google.com | bash > /dev/null;'
                 sh '''#!/bin/bash
                      source $HOME/google-cloud-sdk/path.bash.inc
