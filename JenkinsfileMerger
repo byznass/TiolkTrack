@@ -19,7 +19,6 @@ node{
 
                     // It's important to add --info because of SONARJNKNS-281
                     sh '''
-
 						./gradlew --info sonarqube \
 						-Dsonar.projectKey=TiolkTrack \
 						-Dsonar.projectName=TiolkTrack \
@@ -29,19 +28,26 @@ node{
             }
         }
 
+        stage('Docker image building'){
+            sh 'docker build -t byznass/tiolktrack-client:$(git rev-parse HEAD) .'
+            sh 'docker tag byznass/tiolktrack-client:$(git rev-parse HEAD) byznass/tiolktrack-client:latest'
+
+            withDockerRegistry([ credentialsId: "byznass-dockerhub", url: "" ]) {
+                sh 'docker push byznass/tiolktrack-client:$(git rev-parse HEAD)'
+                sh 'docker push byznass/tiolktrack-client:latest'
+            }
+        }
+
         //https://stackoverflow.com/questions/45355007/how-to-authenticate-with-a-google-service-account-in-jenkins-pipeline
         stage('k8s deployment'){
             withCredentials([file(credentialsId: 'jenkins-to-k8s', variable: 'GC_KEY')]) {
-                sh 'rm -r /root/google-cloud-sdk'
-                sh 'curl https://sdk.cloud.google.com | bash > /dev/null;'
                 sh '''#!/bin/bash
-                     source $HOME/google-cloud-sdk/path.bash.inc
-                     gcloud components update kubectl
-                     gcloud auth activate-service-account --key-file=${GC_KEY}
-                     gcloud config set project tiolktrack-1548605545784
-                     gcloud config set compute/zone europe-north1-c
-                     gcloud container clusters get-credentials byznass-cluster
-                     kubectl get services
+                    gcloud auth activate-service-account --key-file=${GC_KEY}
+                    gcloud config set project tiolktrack-1548605545784
+                    gcloud config set compute/zone europe-north1-c
+                    gcloud container clusters get-credentials byznass-cluster
+                    kubectl apply -R -f k8s
+                    kubectl set image deployments/client-deployment client=byznass/tiolktrack-client:$(git rev-parse HEAD)
                 '''
             }
         }

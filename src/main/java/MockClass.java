@@ -1,3 +1,4 @@
+
 public class MockClass {
 
     public int doSomething(int seed) {
