@@ -8,9 +8,6 @@ public class MockClass {
      */
     public int doSomething(int seed) {
 
-        System.out.println("message");
-        System.out.println("message2");
-
         return seed + 5;
     }
 
