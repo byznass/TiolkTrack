@@ -17,7 +17,7 @@ node{
     try{
 
         stage('Test'){
-            sh './gradlew test jacocoMerge'
+            sh './gradlew cleanTest test jacocoMerge'
         }
 
         stage('SonarQube analysis') {
