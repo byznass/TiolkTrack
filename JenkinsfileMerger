@@ -40,8 +40,9 @@ node{
         }
 
         stage('k8s deployment'){
-            withCredentials([file(credentialsId: 'jenkins-to-k8s', variable: 'GC_KEY')]) {
-                sh '''#!/bin/bash
+            if (CHANGE_TARGET == 'master') {
+                withCredentials([file(credentialsId: 'jenkins-to-k8s', variable: 'GC_KEY')]) {
+                    sh '''#!/bin/bash
                     gcloud auth activate-service-account --key-file=${GC_KEY}
                     gcloud config set project tiolktrack-1548605545784
                     gcloud config set compute/zone europe-north1-c
@@ -49,6 +50,9 @@ node{
                     kubectl apply -R -f k8s
                     kubectl set image deployments/client-deployment client=byznass/tiolktrack-client:$(git rev-parse HEAD)
                 '''
+                }
+            } else {
+                echo 'Skipped deployment because the branch is not master'
             }
         }
 
