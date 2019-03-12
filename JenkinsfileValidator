@@ -1,5 +1,15 @@
 #!/usr/bin/env groovy
 
+void setBuildStatus(String message, String state) {
+	step([
+			$class: "GitHubCommitStatusSetter",
+			reposSource: [$class: "ManuallyEnteredRepositorySource", url: "https://github.com/byznass/TiolkTrack"],
+			contextSource: [$class: "ManuallyEnteredCommitContextSource", context: "jenkinsValidator"],
+			errorHandlers: [[$class: "ChangingBuildStatusErrorHandler", result: "UNSTABLE"]],
+			statusResultSource: [ $class: "ConditionalStatusResultSource", results: [[$class: "AnyBuildResult", message: message, state: state]] ]
+	])
+}
+
 node{
 
 	checkout scm
@@ -32,6 +42,10 @@ node{
 					'''
 				}
 			}
+		}
+
+		stage('Send result to GitHub') {
+			setBuildStatus("Build complete", "SUCCESS")
 		}
 	} finally{
 		junit '**/build/test-results/**/*.xml'
