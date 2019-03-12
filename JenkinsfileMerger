@@ -7,10 +7,10 @@ node{
     try{
 
         stage('Test'){
-            sh './gradlew cleanTest test jacocoMerge'
+            sh './gradlew test jacocoMerge'
         }
 
-        stage('sonarqube analysis') {
+        stage('SonarQube analysis') {
             withSonarQubeEnv('sonarqube-byznass') {
                 withCredentials([
                         string(credentialsId: 'sonarqube-byznass_token', variable: 'SONAR_LOGIN'),
@@ -18,7 +18,7 @@ node{
                 ]) {
 
                     // It's important to add --info because of SONARJNKNS-281
-                    sh '''
+                    sh '''#!/bin/bash
 						./gradlew --info sonarqube \
 						-Dsonar.projectKey=TiolkTrack \
 						-Dsonar.projectName=TiolkTrack \
@@ -29,16 +29,16 @@ node{
         }
 
         stage('Docker image building'){
-            sh 'docker build -t byznass/tiolktrack-client:$(git rev-parse HEAD) .'
-            sh 'docker tag byznass/tiolktrack-client:$(git rev-parse HEAD) byznass/tiolktrack-client:latest'
-
             withDockerRegistry([ credentialsId: "byznass-dockerhub", url: "" ]) {
-                sh 'docker push byznass/tiolktrack-client:$(git rev-parse HEAD)'
-                sh 'docker push byznass/tiolktrack-client:latest'
+                sh '''#!/bin/bash
+                    docker build -t byznass/tiolktrack-client:$(git rev-parse HEAD) .
+                    docker tag byznass/tiolktrack-client:$(git rev-parse HEAD) byznass/tiolktrack-client:latest
+                    docker push byznass/tiolktrack-client:$(git rev-parse HEAD)
+                    docker push byznass/tiolktrack-client:latest
+                '''
             }
         }
 
-        //https://stackoverflow.com/questions/45355007/how-to-authenticate-with-a-google-service-account-in-jenkins-pipeline
         stage('k8s deployment'){
             withCredentials([file(credentialsId: 'jenkins-to-k8s', variable: 'GC_KEY')]) {
                 sh '''#!/bin/bash
@@ -50,6 +50,10 @@ node{
                     kubectl set image deployments/client-deployment client=byznass/tiolktrack-client:$(git rev-parse HEAD)
                 '''
             }
+        }
+
+        stage('Merge PR'){
+
         }
     } finally{
         junit '**/build/test-results/**/*.xml'
