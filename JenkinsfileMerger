@@ -53,7 +53,17 @@ node{
         }
 
         stage('Merge PR'){
-
+            withCredentials([usernamePassword(credentialsId: 'byznass-dev-github-repo', usernameVariable: 'username', passwordVariable: 'token')]){
+                sh ''' #!/bin/bash
+                    RESPONSE=$(curl -X PUT -u $username:$token https://api.github.com/repos/byznass/TiolkTrack/pulls/$CHANGE_ID/merge --write-out "%{http_code}" --silent --output /dev/null)
+                    
+                    if [ "$RESPONSE" -ne "200" ] 
+                    then
+						echo "Failed to merge pull request"
+						exit 1
+					fi
+                '''
+            }
         }
     } finally{
         junit '**/build/test-results/**/*.xml'
