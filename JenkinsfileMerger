@@ -1,15 +1,5 @@
 #!/usr/bin/env groovy
 
-void setBuildStatus(String message, String state) {
-    step([
-            $class: "GitHubCommitStatusSetter",
-            reposSource: [$class: "ManuallyEnteredRepositorySource", url: "https://github.com/byznass/TiolkTrack"],
-            contextSource: [$class: "ManuallyEnteredCommitContextSource", context: "jenkinsMerger"],
-            errorHandlers: [[$class: "ChangingBuildStatusErrorHandler", result: "UNSTABLE"]],
-            statusResultSource: [ $class: "ConditionalStatusResultSource", results: [[$class: "AnyBuildResult", message: message, state: state]] ]
-    ])
-}
-
 node{
 
     checkout scm
@@ -81,7 +71,14 @@ node{
         }
 
         stage('Send result to GitHub') {
-            setBuildStatus("Build complete", "SUCCESS")
+            withCredentials([string(credentialsId: 'byznass-dev-github-repo_hook', variable: 'TOKEN')]) {
+                sh '''
+                    curl "https://api.github.com/repos/byznass/TiolkTrack/statuses/$(git rev-parse HEAD^)?access_token=$TOKEN" \
+                        -H "Content-Type: application/json" \
+                        -X POST \
+                        -d "{\\\"description\\\": \\\"Deployment and PR merging completed\\\", \\\"state\\\": \\\"success\\\", \\\"context\\\": \\\"jenkinsMerger\\\", \\\"target_url\\\": \\\"$BUILD_URL\\\"}"
+                '''
+            }
         }
     } finally{
         junit '**/build/test-results/**/*.xml'
