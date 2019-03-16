@@ -8,6 +8,6 @@ public class MockClass {
 
     public static void main(String[] args) throws Exception {
 
-        throw new Exception("An issue");
+        throw new Exception("An issue.");
     }
 }
