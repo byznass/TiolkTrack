@@ -5,4 +5,9 @@ public class MockClass {
 
         return seed + 5;
     }
+
+    public static void main(String[] args) throws Exception {
+
+        throw new Exception("An issue");
+    }
 }
