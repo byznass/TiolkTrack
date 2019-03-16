@@ -6,8 +6,26 @@ public class MockClass {
         return seed + 5;
     }
 
-    public static void main(String[] args) throws Exception {
+    public static void main(String[] args) {
 
-        throw new Exception("An issue.");
+        Day day = null;
+
+        switch (day) {
+            case MONDAY:
+            case TUESDAY:
+                WEDNESDAY:   // Noncompliant; syntactically correct, but behavior is not what's expected
+                doSomething();
+                break;
+        }
+    }
+
+    private static void doSomething() {
+
+    }
+
+    private enum Day {
+        MONDAY,
+        TUESDAY,
+        WEDNESDAY
     }
 }
