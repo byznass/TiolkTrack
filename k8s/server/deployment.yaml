@@ -9,16 +9,16 @@ spec:
 
   selector:
     matchLabels:
-      client: web
+      server: web
 
   template:
     metadata:
       labels:
-        client: web
+        server: web
 
     spec:
       containers:
         - name: server
           image: byznass/tiolktrack-server
           ports:
-            - containerPort: 80
+            - containerPort: 8080
