@@ -1,42 +1,47 @@
 plugins {
+    id "jacoco"
+    id "war"
+    id "java"
     id "org.sonarqube" version "2.7"
+    id "org.gretty" version "2.1.0"
 }
-
-apply plugin: 'java'
-apply plugin: 'war'
 
 version '0.1'
 sourceCompatibility = 1.8
 
 repositories {
     mavenCentral()
+    jcenter()
 }
 
 dependencies {
-
     testCompile group: 'junit', name: 'junit', version: '4.12'
     testCompile group: 'org.mockito', name: 'mockito-core', version: '2.25.1'
 
-    compile group: 'org.glassfish.jersey.core', name: 'jersey-server', version: '2.27'
-    compile group: 'org.glassfish.jersey.containers', name: 'jersey-container-servlet-core', version: '2.27'
-    compile group: 'org.glassfish.jersey.inject', name: 'jersey-hk2', version: '2.27'
+    compile group: 'org.glassfish.jersey.core', name: 'jersey-server', version: '2.28'
+    compile group: 'org.glassfish.jersey.containers', name: 'jersey-container-servlet', version: '2.28'
+    compile group: 'org.glassfish.jersey.inject', name: 'jersey-hk2', version: '2.28'
 
+    compile group: 'org.glassfish.jersey.media', name: 'jersey-media-json-jackson', version: '2.28'
 }
+
+gretty {
+    servletContainer = 'jetty7'
+    httpPort = 8080
+    contextPath = '/'
+}
+
 
 def fileWithCoverageForAllTests = "$buildDir/jacoco/coverageForAllTests.exec"
 
-allprojects {
-    apply plugin: 'jacoco'
+jacoco {
+    toolVersion = "0.8.3"
+    reportsDir = file(fileWithCoverageForAllTests)
+}
 
-    jacoco {
-        toolVersion = "0.8.2"
-        reportsDir = file(fileWithCoverageForAllTests)
-    }
-
-    sonarqube {
-        properties {
-            property "sonar.jacoco.reportPath", fileWithCoverageForAllTests
-        }
+sonarqube {
+    properties {
+        property "sonar.jacoco.reportPath", fileWithCoverageForAllTests
     }
 }
 

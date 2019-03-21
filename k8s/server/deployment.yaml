@@ -2,7 +2,7 @@ apiVersion: apps/v1
 kind: Deployment
 
 metadata:
-  name: client-deployment
+  name: server-deployment
 
 spec:
   replicas: 1
@@ -18,7 +18,7 @@ spec:
 
     spec:
       containers:
-        - name: client
-          image: byznass/tiolktrack-client
+        - name: server
+          image: byznass/tiolktrack-server
           ports:
             - containerPort: 80

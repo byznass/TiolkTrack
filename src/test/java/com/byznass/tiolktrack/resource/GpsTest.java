@@ -27,7 +27,7 @@ public class GpsTest {
     }
 
     @Test
-    public void whenGettingCurrentLocationOfGpdThenReturnCorrectResponse() {
+    public void whenGettingCurrentLocationOfGpsThenReturnCorrectResponse() {
 
         String gpsId = "xyz";
         Location expectedLocation = new Location("123", "456");
