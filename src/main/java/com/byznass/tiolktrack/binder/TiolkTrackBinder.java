@@ -1,7 +1,7 @@
 package com.byznass.tiolktrack.binder;
 
 import com.byznass.tiolktrack.resource.Gps;
-import com.byznass.tiolktrack.resource.handler.GetGpsById;
+import com.byznass.tiolktrack.kernel.handler.GetGpsById;
 import org.glassfish.jersey.internal.inject.AbstractBinder;
 
 import javax.inject.Singleton;

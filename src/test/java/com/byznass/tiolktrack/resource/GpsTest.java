@@ -1,7 +1,7 @@
 package com.byznass.tiolktrack.resource;
 
 import com.byznass.tiolktrack.resource.dto.Location;
-import com.byznass.tiolktrack.resource.handler.GetGpsById;
+import com.byznass.tiolktrack.kernel.handler.GetGpsById;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;

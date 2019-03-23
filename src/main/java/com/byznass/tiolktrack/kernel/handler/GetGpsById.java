@@ -1,4 +1,4 @@
-package com.byznass.tiolktrack.resource.handler;
+package com.byznass.tiolktrack.kernel.handler;
 
 import com.byznass.tiolktrack.resource.dto.Location;
 

@@ -1,7 +1,7 @@
 package com.byznass.tiolktrack.resource;
 
 import com.byznass.tiolktrack.resource.dto.Location;
-import com.byznass.tiolktrack.resource.handler.GetGpsById;
+import com.byznass.tiolktrack.kernel.handler.GetGpsById;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -19,7 +19,7 @@ public class Gps {
     private final GetGpsById getGpsById;
 
     @Inject
-    public Gps(GetGpsById getGpsById) {
+    private Gps(GetGpsById getGpsById) {
 
         this.getGpsById = getGpsById;
     }

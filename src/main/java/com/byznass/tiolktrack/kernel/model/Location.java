@@ -1,4 +1,4 @@
-package com.byznass.tiolktrack.model;
+package com.byznass.tiolktrack.kernel.model;
 
 public class Location {
 
