@@ -20,8 +20,8 @@ node{
                     // It's important to add --info because of SONARJNKNS-281
                     sh '''#!/bin/bash
 						./gradlew --info sonarqube \
-						-Dsonar.projectKey=TiolkTrack \
-						-Dsonar.projectName=TiolkTrack \
+						-Dsonar.projectKey=TiolkTrack-Server \
+						-Dsonar.projectName=TiolkTrack-Server \
 						-Dsonar.login=$SONAR_LOGIN
 					'''
                 }
@@ -59,7 +59,7 @@ node{
         stage('Merge PR'){
             withCredentials([usernamePassword(credentialsId: 'byznass-dev-github-repo', usernameVariable: 'username', passwordVariable: 'token')]){
                 sh ''' #!/bin/bash
-                    RESPONSE=$(curl -X PUT -u $username:$token https://api.github.com/repos/byznass/TiolkTrack/pulls/$CHANGE_ID/merge --write-out "%{http_code}" --silent --output /dev/null)
+                    RESPONSE=$(curl -X PUT -u $username:$token https://api.github.com/repos/byznass/TiolkTrack-Server/pulls/$CHANGE_ID/merge --write-out "%{http_code}" --silent --output /dev/null)
                     
                     if [ "$RESPONSE" -ne "200" ] 
                     then
@@ -73,7 +73,7 @@ node{
         stage('Send result to GitHub') {
             withCredentials([string(credentialsId: 'byznass-dev-github-repo_hook', variable: 'TOKEN')]) {
                 sh '''
-                    curl "https://api.github.com/repos/byznass/TiolkTrack/statuses/$(git rev-parse HEAD^)?access_token=$TOKEN" \
+                    curl "https://api.github.com/repos/byznass/TiolkTrack-Server/statuses/$(git rev-parse HEAD^)?access_token=$TOKEN" \
                         -H "Content-Type: application/json" \
                         -X POST \
                         -d "{\\\"description\\\": \\\"Deployment and PR merging completed\\\", \\\"state\\\": \\\"success\\\", \\\"context\\\": \\\"jenkinsMerger\\\", \\\"target_url\\\": \\\"$BUILD_URL\\\"}"
