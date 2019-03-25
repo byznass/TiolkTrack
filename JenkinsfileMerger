@@ -2,7 +2,7 @@
 
 node{
 
-    checkout scm
+    final scmVars = checkout(scm)
 
     try{
 
@@ -72,8 +72,9 @@ node{
 
         stage('Send result to GitHub') {
             withCredentials([string(credentialsId: 'byznass-dev-github-repo_hook', variable: 'TOKEN')]) {
+                env.HASH="${scmVars.GIT_COMMIT}"
                 sh '''
-                    curl "https://api.github.com/repos/byznass/TiolkTrack-Server/statuses/$(git rev-parse HEAD^)?access_token=$TOKEN" \
+                    curl "https://api.github.com/repos/byznass/TiolkTrack-Server/statuses/${HASH}?access_token=$TOKEN" \
                         -H "Content-Type: application/json" \
                         -X POST \
                         -d "{\\\"description\\\": \\\"Deployment and PR merging completed\\\", \\\"state\\\": \\\"success\\\", \\\"context\\\": \\\"jenkinsMerger\\\", \\\"target_url\\\": \\\"$BUILD_URL\\\"}"
