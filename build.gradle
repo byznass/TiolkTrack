@@ -1,10 +1,13 @@
 plugins {
-    id "jacoco"
     id "war"
     id "java"
     id "org.sonarqube" version "2.7"
     id "org.gretty" version "2.1.0"
+    id "jacoco"
 }
+
+apply from: "./gradle/gretty.gradle"
+apply from: "./gradle/tests.gradle"
 
 version '0.1'
 sourceCompatibility = 1.8
@@ -21,42 +24,7 @@ dependencies {
     compile group: 'org.glassfish.jersey.core', name: 'jersey-server', version: '2.28'
     compile group: 'org.glassfish.jersey.containers', name: 'jersey-container-servlet', version: '2.28'
     compile group: 'org.glassfish.jersey.inject', name: 'jersey-hk2', version: '2.28'
-
     compile group: 'org.glassfish.jersey.media', name: 'jersey-media-json-jackson', version: '2.28'
-}
 
-gretty {
-    servletContainer = 'jetty7'
-    httpPort = 8080
-    contextPath = '/'
-}
-
-
-def fileWithCoverageForAllTests = "$buildDir/jacoco/coverageForAllTests.exec"
-
-jacoco {
-    toolVersion = "0.8.3"
-    reportsDir = file(fileWithCoverageForAllTests)
-}
-
-sonarqube {
-    properties {
-        property "sonar.jacoco.reportPath", fileWithCoverageForAllTests
-    }
-}
-
-jacocoTestReport{
-    executionData = project.fileTree(dir: '.', include:'**/build/jacoco/*.exec')
-    classDirectories = project.fileTree(dir: '.', include:'**/build/classes/main/**/*', excludes: [])
-    sourceDirectories = project.fileTree(dir: '.', include:'**/src/main/java/**/*')
-}
-
-task jacocoMergeTest(type: JacocoMerge) {
-    destinationFile = file(fileWithCoverageForAllTests)
-    executionData = project.fileTree(dir: '.', include:'**/build/jacoco/test.exec')
-}
-
-task jacocoMerge(dependsOn: ['jacocoMergeTest']) {
-
-    // used to run the other merge tasks
+    compile group: 'org.postgresql', name: 'postgresql', version: '42.2.5'
 }
