@@ -10,7 +10,7 @@ services:
       - ./build/libs/:/var/lib/jetty/webapps/:ro
     environment:
       - "JAVA_OPTIONS=-Xdebug -agentlib:jdwp=transport=dt_socket,address=9999,server=y,suspend=n"
-  postgres-db:
+  postgres-server:
     image: 'postgres'
     environment:
       - POSTGRES_USER=tiolktrack
