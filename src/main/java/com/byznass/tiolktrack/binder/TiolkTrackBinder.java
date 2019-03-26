@@ -1,6 +1,6 @@
 package com.byznass.tiolktrack.binder;
 
-import com.byznass.tiolktrack.dao.plsql.PlsqlGpsProvider;
+import com.byznass.tiolktrack.plsql.dao.PlsqlGpsProvider;
 import com.byznass.tiolktrack.kernel.dao.GpsProvider;
 import com.byznass.tiolktrack.kernel.handler.GpsLocationById;
 import com.byznass.tiolktrack.resource.jaxrs.GpsResource;
