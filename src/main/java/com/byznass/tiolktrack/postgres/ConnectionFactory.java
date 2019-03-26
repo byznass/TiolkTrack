@@ -1,4 +1,4 @@
-package com.byznass.tiolktrack.plsql;
+package com.byznass.tiolktrack.postgres;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -16,7 +16,7 @@ public class ConnectionFactory {
 
 			Properties props = new Properties();
 			props.setProperty("user", "tiolktrack");
-			props.setProperty("password", "tiolktrack2");
+			props.setProperty("password", "tiolktrack");
 			props.setProperty("ssl", "true");
 			props.setProperty("sslmode", "allow");
 

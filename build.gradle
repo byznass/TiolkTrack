@@ -39,4 +39,8 @@ war {
         include 'logback.xml'
         into 'WEB-INF/classes'
     }
+    from("$projectDir") {
+        include 'db/'
+        into 'WEB-INF/classes'
+    }
 }
