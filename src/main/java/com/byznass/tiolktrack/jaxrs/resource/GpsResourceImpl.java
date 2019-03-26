@@ -1,8 +1,8 @@
-package com.byznass.tiolktrack.resource.jaxrs;
+package com.byznass.tiolktrack.jaxrs.resource;
 
+import com.byznass.tiolktrack.jaxrs.resource.dto.Location;
+import com.byznass.tiolktrack.jaxrs.resource.dto.mapper.LocationMapper;
 import com.byznass.tiolktrack.kernel.handler.GpsLocationById;
-import com.byznass.tiolktrack.resource.jaxrs.dto.Location;
-import com.byznass.tiolktrack.resource.jaxrs.dto.mapper.LocationMapper;
 
 import javax.inject.Inject;
 

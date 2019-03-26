@@ -3,10 +3,10 @@ package com.byznass.tiolktrack.binder;
 import com.byznass.tiolktrack.postgres.dao.PlsqlGpsProvider;
 import com.byznass.tiolktrack.kernel.dao.GpsProvider;
 import com.byznass.tiolktrack.kernel.handler.GpsLocationById;
-import com.byznass.tiolktrack.resource.jaxrs.GpsResource;
-import com.byznass.tiolktrack.resource.jaxrs.GpsResourceImpl;
-import com.byznass.tiolktrack.resource.jaxrs.dto.mapper.LocationMapper;
-import com.byznass.tiolktrack.resource.jaxrs.exception.mapper.NoGpsWIthIdExceptionMapper;
+import com.byznass.tiolktrack.jaxrs.resource.GpsResource;
+import com.byznass.tiolktrack.jaxrs.resource.GpsResourceImpl;
+import com.byznass.tiolktrack.jaxrs.resource.dto.mapper.LocationMapper;
+import com.byznass.tiolktrack.jaxrs.resource.exception.mapper.NoGpsWIthIdExceptionMapper;
 import org.glassfish.jersey.internal.inject.AbstractBinder;
 
 import javax.inject.Singleton;

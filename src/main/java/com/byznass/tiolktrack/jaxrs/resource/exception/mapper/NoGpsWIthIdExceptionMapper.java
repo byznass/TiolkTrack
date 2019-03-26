@@ -1,4 +1,4 @@
-package com.byznass.tiolktrack.resource.jaxrs.exception.mapper;
+package com.byznass.tiolktrack.jaxrs.resource.exception.mapper;
 
 import com.byznass.tiolktrack.kernel.dao.NoGpsWithIdException;
 
