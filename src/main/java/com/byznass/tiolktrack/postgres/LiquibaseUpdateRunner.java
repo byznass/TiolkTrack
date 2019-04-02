@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.sql.Connection;
+import java.sql.SQLException;
 
 public class LiquibaseUpdateRunner {
 
@@ -29,16 +30,16 @@ public class LiquibaseUpdateRunner {
 
 	public void update() {
 
-		try {
-			LOGGER.info("Starting Liquibase update");
-			Connection connection = connectionProvider.getConnection();
+		LOGGER.info("Starting Liquibase update");
+
+		try (Connection connection = connectionProvider.getConnection()) {
 			JdbcConnection jdbcConnection = new JdbcConnection(connection);
 			Database database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(jdbcConnection);
 
 			Liquibase liquibase = new Liquibase(CHANGE_LOG_FILE, new ClassLoaderResourceAccessor(), database);
 			liquibase.update(new Contexts(), new LabelExpression());
 			LOGGER.info("Finished Liquibase update");
-		} catch (LiquibaseException | ConnectionFailureException e) {
+		} catch (LiquibaseException | ConnectionFailureException | SQLException e) {
 			LOGGER.error("Liquibase update failed", e);
 			throw new LiquibaseUpdateException("Liquibase update failed", e);
 		}

@@ -35,11 +35,8 @@ public class ConnectionFactory implements ConnectionProvider {
 			Properties connectionDetails = getConnectionDetails();
 
 			String url = String.format(URL, propertyProvider.getValue(DB_HOST));
-			Connection connection =
-					DriverManager.getConnection(url, connectionDetails);
-			LOGGER.info("Postgres connection {}@{} created successfully", propertyProvider.getValue(DB_USERNAME), url);
 
-			return connection;
+			return DriverManager.getConnection(url, connectionDetails);
 		} catch (ClassNotFoundException | SQLException | NoSuchPropertyException e) {
 			LOGGER.error("Cannot connect to database {}", String.format(URL, propertyProvider.getValue(DB_HOST)), e);
 			throw new ConnectionFailureException("Cannot connect to database " + String.format(URL, propertyProvider.getValue(DB_HOST)), e);
