@@ -7,7 +7,6 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 @Path("/test")
 public class TestResource {
@@ -23,8 +22,8 @@ public class TestResource {
 	@GET
 	public String getAllLine() {
 
-		try (Statement statement = connectionProvider.getConnection().createStatement()) {
-			ResultSet resultSet = statement.executeQuery("SELECT * FROM testTable");
+		String query = "SELECT * FROM testTable";
+		try (ResultSet resultSet = connectionProvider.getConnection().createStatement().executeQuery(query)) {
 
 			StringBuilder result = new StringBuilder();
 			while (resultSet.next()) {
