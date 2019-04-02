@@ -1,6 +1,9 @@
 package com.byznass.tiolktrack;
 
 import com.byznass.tiolktrack.binder.TiolkTrackBinder;
+import com.byznass.tiolktrack.config.PropertyProvider;
+import com.byznass.tiolktrack.postgres.ConnectionFactory;
+import com.byznass.tiolktrack.postgres.ConnectionProvider;
 import com.byznass.tiolktrack.postgres.LiquibaseUpdateRunner;
 import com.byznass.tiolktrack.jaxrs.resource.GpsResource;
 import com.byznass.tiolktrack.jaxrs.resource.exception.mapper.NoGpsWIthIdExceptionMapper;
@@ -27,7 +30,9 @@ public class TiolkTrackApplication extends ResourceConfig {
 
 	private void initializeApplication() {
 
-		new LiquibaseUpdateRunner().update();
+		PropertyProvider propertyProvider = new PropertyProvider();
+		ConnectionProvider connectionProvider = new ConnectionFactory(propertyProvider);
+		new LiquibaseUpdateRunner(connectionProvider).update();
 	}
 
 }

@@ -1,5 +1,8 @@
 package com.byznass.tiolktrack.binder;
 
+import com.byznass.tiolktrack.config.PropertyProvider;
+import com.byznass.tiolktrack.postgres.ConnectionFactory;
+import com.byznass.tiolktrack.postgres.ConnectionProvider;
 import com.byznass.tiolktrack.postgres.dao.PlsqlGpsProvider;
 import com.byznass.tiolktrack.kernel.dao.GpsProvider;
 import com.byznass.tiolktrack.kernel.handler.GpsLocationById;
@@ -22,5 +25,8 @@ public class TiolkTrackBinder extends AbstractBinder {
 		bind(GpsResourceImpl.class).to(GpsResource.class).in(Singleton.class);
 		bind(LocationMapper.class).to(LocationMapper.class).in(Singleton.class);
 		bind(NoGpsWIthIdExceptionMapper.class).to(NoGpsWIthIdExceptionMapper.class);
+
+		bind(PropertyProvider.class).to(PropertyProvider.class);
+		bind(ConnectionProvider.class).to(ConnectionFactory.class);
 	}
 }
