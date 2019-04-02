@@ -2,6 +2,7 @@ package com.byznass.tiolktrack;
 
 import com.byznass.tiolktrack.binder.TiolkTrackBinder;
 import com.byznass.tiolktrack.config.PropertyProvider;
+import com.byznass.tiolktrack.jaxrs.resource.TestResource;
 import com.byznass.tiolktrack.postgres.ConnectionFactory;
 import com.byznass.tiolktrack.postgres.ConnectionProvider;
 import com.byznass.tiolktrack.postgres.LiquibaseUpdateRunner;
@@ -23,7 +24,10 @@ public class TiolkTrackApplication extends ResourceConfig {
 		LOGGER.info("Starting application initialization");
 		initializeApplication();
 		registerInstances(new TiolkTrackBinder());
+
 		register(GpsResource.class);
+		register(TestResource.class);
+
 		register(NoGpsWIthIdExceptionMapper.class);
 		LOGGER.info("Finished application initialization");
 	}
