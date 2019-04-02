@@ -5,7 +5,6 @@ import com.byznass.tiolktrack.postgres.ConnectionProvider;
 import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
-import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -24,8 +23,7 @@ public class TestResource {
 	@GET
 	public String getAllLine() {
 
-		try (Connection connection = connectionProvider.getConnection()) {
-			Statement statement = connection.createStatement();
+		try (Statement statement = connectionProvider.getConnection().createStatement()) {
 			ResultSet resultSet = statement.executeQuery("SELECT * FROM testTable");
 
 			StringBuilder result = new StringBuilder();
@@ -37,7 +35,7 @@ public class TestResource {
 
 			return result.toString();
 		} catch (SQLException e) {
-			throw new RuntimeException("ERROR");
+			throw new TestResourceException("ERROR");
 		}
 	}
 }
