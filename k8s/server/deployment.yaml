@@ -24,11 +24,11 @@ spec:
             - containerPort: 8080
           env:
             - name: DB_HOST
-              value: postgres-server
+              value: "postgres-server"
             - name: DB_USERNAME
-              value: tiolktrack
+              value: "tiolktrack"
             - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
-                  name: tiolktrack_secret
+                  name: tiolktrack-secret
                   key: DB_PASSWORD
