@@ -1,4 +1,4 @@
-package com.byznass.tiolktrack.resource.jaxrs.dto;
+package com.byznass.tiolktrack.jaxrs.resource.dto;
 
 import java.util.Objects;
 

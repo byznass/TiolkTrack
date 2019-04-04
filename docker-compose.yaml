@@ -4,18 +4,30 @@ services:
   jetty-server:
     image: 'jetty'
     ports:
-      - "80:8080"
-      - "9999:9999"
+      - '80:8080'
+      - '9999:9999'
     volumes:
       - ./build/libs/:/var/lib/jetty/webapps/:ro
     environment:
-      - "JAVA_OPTIONS=-Xdebug -agentlib:jdwp=transport=dt_socket,address=9999,server=y,suspend=n"
+      - 'JAVA_OPTIONS=-Xdebug -agentlib:jdwp=transport=dt_socket,address=9999,server=y,suspend=n'
+      - 'DB_HOST=postgres-server'
+      - 'DB_USERNAME=tiolktrack'
+      - 'DB_PASSWORD=tiolktrack'
   postgres-server:
     image: 'postgres'
+    ports:
+      - '5432:5432'
     environment:
-      - POSTGRES_USER=tiolktrack
-      - POSTGRES_PASSWORD=tiolktrack
+      - 'POSTGRES_USER=tiolktrack'
+      - 'POSTGRES_PASSWORD=tiolktrack'
     volumes:
       - postgres-data:/var/lib/postgresql/data
+  pgadmin:
+    image: 'dpage/pgadmin4'
+    ports:
+      - '81:80'
+    environment:
+      - 'PGADMIN_DEFAULT_EMAIL=byznass.group@gmail.com'
+      - 'PGADMIN_DEFAULT_PASSWORD=byznass'
 volumes:
   postgres-data:

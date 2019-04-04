@@ -1,0 +1,31 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <changeSet id="1" author="byznass">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="testTable"></tableExists>
+            </not>
+        </preConditions>
+        <sql>
+            CREATE TABLE testTable(id INT);
+        </sql>
+    </changeSet>
+
+    <changeSet id="2" author="byznass">
+        <sql>
+            INSERT INTO testTable(id) VALUES(77);
+        </sql>
+    </changeSet>
+
+    <changeSet id="3" author="byznass">
+        <sql>
+            INSERT INTO testTable(id) VALUES(154);
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

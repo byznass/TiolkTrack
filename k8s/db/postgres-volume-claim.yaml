@@ -3,7 +3,7 @@ apiVersion: v1
 kind: PersistentVolumeClaim
 
 metadata:
-  name: Postgres-Volume-Claim
+  name: postgres-volume-claim
 
 spec:
   accessModes:

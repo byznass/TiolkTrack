@@ -1,8 +1,8 @@
-package com.byznass.tiolktrack.resource.jaxrs;
+package com.byznass.tiolktrack.jaxrs.resource;
 
 import com.byznass.tiolktrack.kernel.handler.GpsLocationById;
 import com.byznass.tiolktrack.kernel.model.Location;
-import com.byznass.tiolktrack.resource.jaxrs.dto.mapper.LocationMapper;
+import com.byznass.tiolktrack.jaxrs.resource.dto.mapper.LocationMapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -40,14 +40,14 @@ public class GpsResourceImplTest {
 		ZonedDateTime time = ZonedDateTime.of(2019, 3, 24, 22, 56, 23, 11, ZoneId.of("+02:00"));
 		Location modelLocation =
 				new Location("47.151154", "27.589897", time);
-		com.byznass.tiolktrack.resource.jaxrs.dto.Location expectedLocation =
-				new com.byznass.tiolktrack.resource.jaxrs.dto.Location("47.151154", "27.589897", time.toString());
+		com.byznass.tiolktrack.jaxrs.resource.dto.Location expectedLocation =
+				new com.byznass.tiolktrack.jaxrs.resource.dto.Location("47.151154", "27.589897", time.toString());
 
 		when(gpsLocationById.execute(gpsId)).thenReturn(modelLocation);
 		when(locationMapper.toDto(modelLocation)).thenReturn(expectedLocation);
 
 		// execute
-		com.byznass.tiolktrack.resource.jaxrs.dto.Location actualLocation = gpsResource.getLocationById(gpsId);
+		com.byznass.tiolktrack.jaxrs.resource.dto.Location actualLocation = gpsResource.getLocationById(gpsId);
 
 		// verify
 		assertEquals(expectedLocation, actualLocation);
