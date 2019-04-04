@@ -29,13 +29,17 @@ node{
         }
 
         stage('Docker image building'){
-            withDockerRegistry([ credentialsId: "byznass-dockerhub", url: "" ]) {
-                sh '''#!/bin/bash
+            if (CHANGE_TARGET == 'master') {
+                withDockerRegistry([credentialsId: "byznass-dockerhub", url: ""]) {
+                    sh '''#!/bin/bash
                     docker build -t byznass/tiolktrack-server:$(git rev-parse HEAD) .
                     docker tag byznass/tiolktrack-server:$(git rev-parse HEAD) byznass/tiolktrack-server:latest
                     docker push byznass/tiolktrack-server:$(git rev-parse HEAD)
                     docker push byznass/tiolktrack-server:latest
                 '''
+                }
+            }else{
+                echo 'Skipped Docker image building because the branch is not master'
             }
         }
 
