@@ -1,4 +1,4 @@
-package com.byznass.tiolktrack.plsql.dao;
+package com.byznass.tiolktrack.postgres.dao;
 
 import com.byznass.tiolktrack.kernel.dao.GpsProvider;
 import com.byznass.tiolktrack.kernel.dao.NoGpsWithIdException;

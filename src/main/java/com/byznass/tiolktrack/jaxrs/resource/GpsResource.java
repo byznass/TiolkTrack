@@ -1,6 +1,6 @@
-package com.byznass.tiolktrack.resource.jaxrs;
+package com.byznass.tiolktrack.jaxrs.resource;
 
-import com.byznass.tiolktrack.resource.jaxrs.dto.Location;
+import com.byznass.tiolktrack.jaxrs.resource.dto.Location;
 
 import javax.inject.Singleton;
 import javax.ws.rs.GET;

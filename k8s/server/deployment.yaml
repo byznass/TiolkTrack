@@ -22,3 +22,13 @@ spec:
           image: byznass/tiolktrack-server
           ports:
             - containerPort: 8080
+          env:
+            - name: DB_HOST
+              value: "postgres-server"
+            - name: DB_USERNAME
+              value: "tiolktrack"
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: tiolktrack-secret
+                  key: DB_PASSWORD

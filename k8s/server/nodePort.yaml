@@ -2,14 +2,15 @@ apiVersion: v1
 kind: Service
 
 metadata:
-  name: server-clusterip
+  name: proxy-node-port
 
 spec:
-  type: ClusterIP
+  type: NodePort
 
   ports:
     - port: 8080
       targetPort: 8080
+      nodePort: 31111
 
   selector:
     server: web

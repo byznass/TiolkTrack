@@ -4,10 +4,8 @@ plugins {
     id "org.sonarqube" version "2.7"
     id "org.gretty" version "2.1.0"
     id "jacoco"
+    id "org.liquibase.gradle" version "2.0.1"
 }
-
-apply from: "./gradle/gretty.gradle"
-apply from: "./gradle/tests.gradle"
 
 version '0.1'
 sourceCompatibility = 1.8
@@ -20,6 +18,8 @@ repositories {
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
     testCompile group: 'org.mockito', name: 'mockito-core', version: '2.25.1'
+    testCompile group: 'org.powermock', name: 'powermock-module-junit4', version: '2.0.0'
+    testCompile group: 'org.powermock', name: 'powermock-api-mockito2', version: '2.0.0'
 
     compile group: 'org.glassfish.jersey.core', name: 'jersey-server', version: '2.28'
     compile group: 'org.glassfish.jersey.containers', name: 'jersey-container-servlet', version: '2.28'
@@ -27,4 +27,22 @@ dependencies {
     compile group: 'org.glassfish.jersey.media', name: 'jersey-media-json-jackson', version: '2.28'
 
     compile group: 'org.postgresql', name: 'postgresql', version: '42.2.5'
+
+    testCompile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
+
+    compile 'org.liquibase:liquibase-core:3.6.1'
+}
+
+apply from: "$projectDir/gradle/gretty.gradle"
+apply from: "$projectDir/gradle/tests.gradle"
+
+war {
+    from("$projectDir") {
+        include 'logback.xml'
+        into 'WEB-INF/classes'
+    }
+    from("$projectDir") {
+        include 'db/'
+        into 'WEB-INF/classes'
+    }
 }

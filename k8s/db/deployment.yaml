@@ -19,8 +19,8 @@ spec:
     spec:
       volumes:
         - name: postgres-storage
-        - persistentVolumeClaim:
-            claimName: Postgres-Volume-Claim
+          persistentVolumeClaim:
+            claimName: postgres-volume-claim
       containers:
         - name: postgres
           image: postgres
@@ -29,3 +29,11 @@ spec:
           volumeMounts:
             - name: postgres-storage
               mountPath: /var/lib/postgresql/data
+          env:
+            - name: POSTGRES_USER
+              value: "tiolktrack"
+            - name: POSTGRES_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: tiolktrack-secret
+                  key: DB_PASSWORD
