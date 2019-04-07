@@ -1,0 +1,39 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd
+    http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <changeSet id="0.1.1" author="byznass">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="gps"></tableExists>
+            </not>
+        </preConditions>
+        <sql>
+            CREATE TABLE gps(
+                id VARCHAR(50) PRIMARY KEY
+            );
+        </sql>
+    </changeSet>
+
+    <changeSet id="0.1.2" author="byznass">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="location"></tableExists>
+            </not>
+        </preConditions>
+        <sql>
+            CREATE TABLE location(
+                id VARCHAR(50) PRIMARY KEY,
+                gpsId VARCHAR(50) NOT NULL,
+                latitude VARCHAR(20) NOT NULL,
+                longitude VARCHAR(20) NOT NULL,
+                time TIMESTAMP NOT NULL,
+                FOREIGN KEY (gpsId) REFERENCES gps(id) ON DELETE CASCADE ON UPDATE CASCADE
+            );
+        </sql>
+    </changeSet>
+
+</databaseChangeLog>

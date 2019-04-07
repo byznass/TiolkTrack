@@ -1,0 +1,34 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: server-deployment
+
+spec:
+  replicas: 1
+
+  selector:
+    matchLabels:
+      server: web
+
+  template:
+    metadata:
+      labels:
+        server: web
+
+    spec:
+      containers:
+        - name: server
+          image: byznass/tiolktrack-server
+          ports:
+            - containerPort: 8080
+          env:
+            - name: DB_HOST
+              value: "postgres-server"
+            - name: DB_USERNAME
+              value: "tiolktrack"
+            - name: DB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: tiolktrack-secret
+                  key: DB_PASSWORD

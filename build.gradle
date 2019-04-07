@@ -1,48 +1,48 @@
 plugins {
+    id "war"
+    id "java"
     id "org.sonarqube" version "2.7"
+    id "org.gretty" version "2.1.0"
+    id "jacoco"
+    id "org.liquibase.gradle" version "2.0.1"
 }
 
-apply plugin: 'java'
 version '0.1'
 sourceCompatibility = 1.8
 
 repositories {
     mavenCentral()
+    jcenter()
 }
 
 dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
+    testCompile group: 'org.mockito', name: 'mockito-core', version: '2.25.1'
+    testCompile group: 'org.powermock', name: 'powermock-module-junit4', version: '2.0.0'
+    testCompile group: 'org.powermock', name: 'powermock-api-mockito2', version: '2.0.0'
+    testCompile group: 'org.hamcrest', name: 'hamcrest-all', version: '1.3'
+
+    compile group: 'org.glassfish.jersey.core', name: 'jersey-server', version: '2.28'
+    compile group: 'org.glassfish.jersey.containers', name: 'jersey-container-servlet', version: '2.28'
+    compile group: 'org.glassfish.jersey.inject', name: 'jersey-hk2', version: '2.28'
+    compile group: 'org.glassfish.jersey.media', name: 'jersey-media-json-jackson', version: '2.28'
+
+    compile group: 'org.postgresql', name: 'postgresql', version: '42.2.5'
+
+    testCompile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
+
+    compile 'org.liquibase:liquibase-core:3.6.1'
 }
 
-def fileWithCoverageForAllTests = "$buildDir/jacoco/coverageForAllTests.exec"
+apply from: "$projectDir/gradle/tests.gradle"
 
-allprojects {
-    apply plugin: 'jacoco'
-
-    jacoco {
-        toolVersion = "0.8.2"
-        reportsDir = file(fileWithCoverageForAllTests)
+war {
+    from("$projectDir") {
+        include 'logback.xml'
+        into 'WEB-INF/classes'
     }
-
-    sonarqube {
-        properties {
-            property "sonar.jacoco.reportPath", fileWithCoverageForAllTests
-        }
+    from("$projectDir") {
+        include 'db/'
+        into 'WEB-INF/classes'
     }
-}
-
-jacocoTestReport{
-    executionData = project.fileTree(dir: '.', include:'**/build/jacoco/*.exec')
-    classDirectories = project.fileTree(dir: '.', include:'**/build/classes/main/**/*', excludes: [])
-    sourceDirectories = project.fileTree(dir: '.', include:'**/src/main/java/**/*')
-}
-
-task jacocoMergeTest(type: JacocoMerge) {
-    destinationFile = file(fileWithCoverageForAllTests)
-    executionData = project.fileTree(dir: '.', include:'**/build/jacoco/test.exec')
-}
-
-task jacocoMerge(dependsOn: ['jacocoMergeTest']) {
-
-    // used to run the other merge tasks
 }
