@@ -2,50 +2,50 @@
 
 node{
 
-	checkout scm
+    final scmVars = checkout(scm)
 
-	try{
+    try{
 
-		stage('Test'){
-			sh './gradlew cleanTest test jacocoMerge'
-		}
+        stage('Test'){
+            sh './gradlew cleanTest test jacocoMerge'
+        }
 
-		stage('SonarQube analysis') {
-			withSonarQubeEnv('sonarqube-byznass') {
-				withCredentials([
-						string(credentialsId: 'sonarqube-byznass_token', variable: 'SONAR_LOGIN'),
-						string(credentialsId: 'github-token-sonarqube', variable: 'GITHUB_TOKEN')
-				]) {
+        stage('SonarQube analysis') {
+            withSonarQubeEnv('sonarqube-byznass') {
+                withCredentials([
+                        string(credentialsId: 'sonarqube-byznass_token', variable: 'SONAR_LOGIN'),
+                        string(credentialsId: 'github-token-sonarqube', variable: 'GITHUB_TOKEN')
+                ]) {
 
-					// It's important to add --info because of SONARJNKNS-281
-					sh '''
+                    // It's important to add --info because of SONARJNKNS-281
+                    sh '''
 						PR_ID=$(echo $BRANCH_NAME | cut -d '-' -f 2)
-
 						./gradlew --info sonarqube \
-						-Dsonar.projectKey=TiolkTrack \
-						-Dsonar.projectName=TiolkTrack \
+						-Dsonar.projectKey=TiolkTrack-Server \
+						-Dsonar.projectName=TiolkTrack-Server \
 						-Dsonar.analysis.mode=preview \
 						-Dsonar.login=$SONAR_LOGIN \
 						-Dsonar.github.oauth=$GITHUB_TOKEN \
-						-Dsonar.github.repository=byznass/TiolkTrack \
+						-Dsonar.github.repository=byznass/TiolkTrack-Server \
 						-Dsonar.github.pullRequest=$PR_ID
 					'''
-				}
-			}
-		}
+                }
+            }
+        }
 
-		stage('Send result to GitHub') {
-			withCredentials([string(credentialsId: 'byznass-dev-github-repo_hook', variable: 'TOKEN')]) {
-				sh '''
-                    curl "https://api.github.com/repos/byznass/TiolkTrack/statuses/$(git rev-parse HEAD^)?access_token=$TOKEN" \
+        stage('Send result to GitHub') {
+            withCredentials([string(credentialsId: 'byznass-dev-github-repo_hook', variable: 'TOKEN')]) {
+                env.HASH="${scmVars.GIT_COMMIT}"
+                sh '''
+                    curl "https://api.github.com/repos/byznass/TiolkTrack-Server/statuses/${HASH}?access_token=$TOKEN" \
                         -H "Content-Type: application/json" \
                         -X POST \
                         -d "{\\\"description\\\": \\\"Validation completed\\\", \\\"state\\\": \\\"success\\\", \\\"context\\\": \\\"jenkinsValidator\\\", \\\"target_url\\\": \\\"$BUILD_URL\\\"}"
                 '''
-			}
-		}
-	} finally{
-		junit '**/build/test-results/**/*.xml'
-		jacoco execPattern: '**/coverageForAllTests.exec'
-	}
+            }
+        }
+    } finally{
+        junit '**/build/test-results/**/*.xml'
+        jacoco execPattern: '**/coverageForAllTests.exec'
+    }
 }
