@@ -5,17 +5,19 @@ import javax.ws.rs.ext.ExceptionMapper;
 import javax.ws.rs.ext.Provider;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE;
-import static javax.ws.rs.core.Response.Status.NOT_FOUND;
+import static javax.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR;
 
 @Provider
 public class RuntimeExceptionMapper implements ExceptionMapper<RuntimeException> {
 
+	private static final String RESPONSE = "{\n\t\"error\": \"%s\"\n}";
+
 	@Override
 	public Response toResponse(RuntimeException exception) {
 
-		return Response.status(NOT_FOUND)
+		return Response.status(INTERNAL_SERVER_ERROR)
 				.type(APPLICATION_JSON_TYPE)
-				.entity("An error occured " + exception.getMessage())
+				.entity(String.format(RESPONSE, exception.getMessage()))
 				.build();
 	}
 }

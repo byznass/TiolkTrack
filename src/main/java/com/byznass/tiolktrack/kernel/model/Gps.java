@@ -1,18 +1,26 @@
 package com.byznass.tiolktrack.kernel.model;
 
+import javax.inject.Singleton;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import static java.util.Collections.unmodifiableList;
+import static java.util.Comparator.comparing;
+import static java.util.Objects.requireNonNull;
+
+@Singleton
 public class Gps {
 
-	private String id;
-	private Location currentLocation;
+	private final String id;
+	private final List<Location> locationsInTime;
 
-	public Location getCurrentLocation() {
+	public Gps(String id, List<Location> locationsInTime) {
 
-		return currentLocation;
-	}
+		this.id = requireNonNull(id, "id cannot be null");
 
-	public void setCurrentLocation(Location currentLocation) {
-
-		this.currentLocation = currentLocation;
+		this.locationsInTime = new ArrayList<>(requireNonNull(locationsInTime, "locationsInTime cannot be null"));
+		this.locationsInTime.sort(comparing(Location::getTime));
 	}
 
 	public String getId() {
@@ -20,8 +28,15 @@ public class Gps {
 		return id;
 	}
 
-	public void setId(String id) {
+	public Optional<Location> getLastLocation() {
 
-		this.id = id;
+		return locationsInTime.isEmpty()
+				? Optional.empty()
+				: Optional.of(locationsInTime.get(locationsInTime.size() - 1));
+	}
+
+	public List<Location> getLocationsInTime() {
+
+		return unmodifiableList(locationsInTime);
 	}
 }

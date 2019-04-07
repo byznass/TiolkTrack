@@ -1,9 +1,0 @@
-/**
- * Contains gretty related settings for gradle to run the application locally. Can be used for debug.
- */
-
-gretty {
-    servletContainer = 'jetty7'
-    httpPort = 8080
-    contextPath = '/'
-}

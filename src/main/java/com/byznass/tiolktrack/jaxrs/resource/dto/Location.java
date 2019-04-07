@@ -74,10 +74,14 @@ public class Location {
 	@Override
 	public boolean equals(Object o) {
 
-		if (this == o)
+		if (this == o) {
 			return true;
-		if (!(o instanceof Location))
+		}
+
+		if (!(o instanceof Location)) {
 			return false;
+		}
+
 		Location location = (Location) o;
 		return latitude.equals(location.latitude) &&
 				longitude.equals(location.longitude) &&

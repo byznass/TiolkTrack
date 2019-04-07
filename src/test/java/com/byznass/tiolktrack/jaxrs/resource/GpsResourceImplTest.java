@@ -1,8 +1,8 @@
 package com.byznass.tiolktrack.jaxrs.resource;
 
+import com.byznass.tiolktrack.jaxrs.resource.dto.mapper.LocationMapper;
 import com.byznass.tiolktrack.kernel.handler.GpsLocationById;
 import com.byznass.tiolktrack.kernel.model.Location;
-import com.byznass.tiolktrack.jaxrs.resource.dto.mapper.LocationMapper;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -39,7 +39,7 @@ public class GpsResourceImplTest {
 		String gpsId = "xyz";
 		ZonedDateTime time = ZonedDateTime.of(2019, 3, 24, 22, 56, 23, 11, ZoneId.of("+02:00"));
 		Location modelLocation =
-				new Location("47.151154", "27.589897", time);
+				new Location("locid", "47.151154", "27.589897", time, gpsId);
 		com.byznass.tiolktrack.jaxrs.resource.dto.Location expectedLocation =
 				new com.byznass.tiolktrack.jaxrs.resource.dto.Location("47.151154", "27.589897", time.toString());
 
@@ -53,6 +53,16 @@ public class GpsResourceImplTest {
 		assertEquals(expectedLocation, actualLocation);
 		verify(gpsLocationById).execute(gpsId);
 		verify(locationMapper).toDto(modelLocation);
+	}
+
+	@Test(expected = RuntimeException.class)
+	public void givenAnExceptionIsThrownWhenGettingCurrentLocationThenRethrow() {
+
+		String gpsId = "123";
+
+		when(gpsLocationById.execute(gpsId)).thenThrow(new RuntimeException());
+
+		gpsResource.getLocationById(gpsId);
 	}
 
 }

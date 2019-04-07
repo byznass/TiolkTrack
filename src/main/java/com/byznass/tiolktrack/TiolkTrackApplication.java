@@ -2,12 +2,14 @@ package com.byznass.tiolktrack;
 
 import com.byznass.tiolktrack.binder.TiolkTrackBinder;
 import com.byznass.tiolktrack.config.PropertyProvider;
-import com.byznass.tiolktrack.jaxrs.resource.TestResource;
+import com.byznass.tiolktrack.jaxrs.resource.GpsResource;
+import com.byznass.tiolktrack.jaxrs.resource.exception.mapper.NoGpsWIthIdExceptionMapper;
+import com.byznass.tiolktrack.jaxrs.resource.exception.mapper.NoLocationForGpsExceptionMapper;
+import com.byznass.tiolktrack.jaxrs.resource.exception.mapper.RuntimeExceptionMapper;
+import com.byznass.tiolktrack.jaxrs.resource.exception.mapper.TiolkTrackExceptionMapper;
 import com.byznass.tiolktrack.postgres.ConnectionFactory;
 import com.byznass.tiolktrack.postgres.ConnectionProvider;
 import com.byznass.tiolktrack.postgres.LiquibaseUpdateRunner;
-import com.byznass.tiolktrack.jaxrs.resource.GpsResource;
-import com.byznass.tiolktrack.jaxrs.resource.exception.mapper.NoGpsWIthIdExceptionMapper;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -23,12 +25,16 @@ public class TiolkTrackApplication extends ResourceConfig {
 
 		LOGGER.info("Starting application initialization");
 		initializeApplication();
+
 		registerInstances(new TiolkTrackBinder());
 
 		register(GpsResource.class);
-		register(TestResource.class);
 
 		register(NoGpsWIthIdExceptionMapper.class);
+		register(NoLocationForGpsExceptionMapper.class);
+		register(RuntimeExceptionMapper.class);
+		register(TiolkTrackExceptionMapper.class);
+
 		LOGGER.info("Finished application initialization");
 	}
 

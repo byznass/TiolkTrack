@@ -10,6 +10,7 @@ import org.mockito.Mock;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
@@ -31,16 +32,17 @@ public class GpsLocationByIdTest {
 	}
 
 	@Test
-	public void givenCorrectGpsIdWhenGettingLocationThenReturnCorrectly() {
+	public void givenCorrectGpsIdWhenGettingLocationForGpsWithLocationsThenReturnLastOne() {
 
 		// setup
 		String gpsId = "id";
 		Gps gps = mock(Gps.class);
-		Location expectedLocation =
-				new Location("456", "123", ZonedDateTime.of(2019, 3, 24, 23, 8, 10, 0, ZoneId.of("+02:00")));
+
+		ZonedDateTime time = ZonedDateTime.of(2019, 3, 24, 23, 8, 10, 0, ZoneId.of("+02:00"));
+		Location expectedLocation = new Location("locid", "456", "123", time, gpsId);
 
 		when(gpsProvider.getGpsById(gpsId)).thenReturn(gps);
-		when(gps.getCurrentLocation()).thenReturn(expectedLocation);
+		when(gps.getLastLocation()).thenReturn(Optional.of(expectedLocation));
 
 		// execute
 		Location actualLocation = handler.execute(gpsId);
@@ -48,6 +50,20 @@ public class GpsLocationByIdTest {
 		// verify
 		verify(gpsProvider).getGpsById(gpsId);
 		assertEquals(expectedLocation, actualLocation);
+	}
+
+	@Test(expected = NoLocationForGpsException.class)
+	public void givenCorrectGpsIdWhenGettingLocationForGpsWithoutLocationsThenThrowException() {
+
+		// setup
+		String gpsId = "id";
+		Gps gps = mock(Gps.class);
+
+		when(gpsProvider.getGpsById(gpsId)).thenReturn(gps);
+		when(gps.getLastLocation()).thenReturn(Optional.empty());
+
+		// execute
+		handler.execute(gpsId);
 	}
 
 	@Test(expected = NoGpsWithIdException.class)
