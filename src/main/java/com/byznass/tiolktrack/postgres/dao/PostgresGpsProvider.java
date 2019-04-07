@@ -56,12 +56,17 @@ public class PostgresGpsProvider implements GpsProvider {
 	private boolean exists(String gpsId) throws SQLException {
 
 		String query = "SELECT * FROM gps WHERE id=?";
+		ResultSet resultSet = null;
 		try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
 
 			preparedStatement.setString(1, gpsId);
-			ResultSet resultSet = preparedStatement.executeQuery();
+			resultSet = preparedStatement.executeQuery();
 
 			return resultSet.next();
+		} finally {
+			if (resultSet != null) {
+				resultSet.close();
+			}
 		}
 	}
 }

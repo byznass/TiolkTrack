@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+import java.util.Optional;
 
 public class GpsLocationById {
 
@@ -25,13 +26,14 @@ public class GpsLocationById {
 		LOGGER.info("Trying to get current location of GPS with id=\"{}\"", gpsId);
 		Gps gps = gpsProvider.getGpsById(gpsId);
 
-		if (!gps.getLastLocation().isPresent()) {
+		Optional<Location> location = gps.getLastLocation();
+		if (!location.isPresent()) {
 			LOGGER.error("GPS with id=\"{}\" has no location", gpsId);
 			throw new NoLocationForGpsException(gpsId);
 		}
 
 		LOGGER.info("Successfully retrieved last location for GPS with id=\"{}\"", gpsId);
 
-		return gps.getLastLocation().get();
+		return location.get();
 	}
 }
