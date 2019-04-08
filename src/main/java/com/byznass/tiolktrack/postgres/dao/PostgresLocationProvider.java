@@ -19,6 +19,7 @@ import java.util.List;
 public class PostgresLocationProvider implements LocationProvider {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(PostgresLocationProvider.class);
+
 	private final Connection connection;
 
 	@Inject
@@ -58,12 +59,11 @@ public class PostgresLocationProvider implements LocationProvider {
 
 	private Location getLocation(ResultSet resultSet) throws SQLException {
 
-		String id = resultSet.getString("id");
 		String latitude = resultSet.getString("latitude");
 		String longitude = resultSet.getString("longitude");
-		ZonedDateTime time = resultSet.getTimestamp("time").toLocalDateTime().atZone(ZoneId.of("Z"));
+		ZonedDateTime time = resultSet.getTimestamp("time").toLocalDateTime().atZone(ZoneId.of("UTC"));
 		String gpsIdOfCurrentLocation = resultSet.getString("gpsId");
 
-		return new Location(id, latitude, longitude, time, gpsIdOfCurrentLocation);
+		return new Location(latitude, longitude, time, gpsIdOfCurrentLocation);
 	}
 }

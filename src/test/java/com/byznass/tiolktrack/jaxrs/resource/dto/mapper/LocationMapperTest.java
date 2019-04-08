@@ -22,14 +22,14 @@ public class LocationMapperTest {
 	@Test
 	public void givenModelLocationWhenMappingToDotThenDoItCorrectly() {
 
-		ZonedDateTime time = ZonedDateTime.of(2019, 4, 6, 10, 15, 20, 0, ZoneId.of("+02:00"));
+		ZonedDateTime time = ZonedDateTime.of(2019, 4, 6, 10, 15, 20, 0, ZoneId.of("UTC"));
 		String gpsID = "xxx";
 		com.byznass.tiolktrack.kernel.model.Location modelLocation =
-				new com.byznass.tiolktrack.kernel.model.Location("locid", "123", "456", time, gpsID);
+				new com.byznass.tiolktrack.kernel.model.Location("123", "456", time, gpsID);
 
 		Location actualLocation = locationMapper.toDto(modelLocation);
 
-		Location expectedLocation = new Location("123", "456", "2019-04-06T10:15:20+02:00");
+		Location expectedLocation = new Location("123", "456", "2019-04-06T10:15:20Z[UTC]");
 		assertEquals(expectedLocation, actualLocation);
 	}
 }

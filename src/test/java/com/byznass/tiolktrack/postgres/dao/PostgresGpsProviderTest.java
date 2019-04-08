@@ -48,8 +48,8 @@ public class PostgresGpsProviderTest {
 		String gpsId = "123";
 
 		Location[] locations = new Location[]{
-				new Location("locid1", "xxx", "yyy", ZonedDateTime.now().minusDays(1), gpsId),
-				new Location("locid2", "xxx", "yyy", ZonedDateTime.now().minusDays(2), gpsId)
+				new Location("xxx", "yyy", ZonedDateTime.now().minusDays(1), gpsId),
+				new Location( "xxx", "yyy", ZonedDateTime.now().minusDays(2), gpsId)
 		};
 
 		PreparedStatement preparedStatement = mock(PreparedStatement.class);

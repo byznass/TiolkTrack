@@ -33,40 +33,40 @@ public class PostgresGpsProvider implements GpsProvider {
 	@Override
 	public Gps getGpsById(String gpsId) throws NoGpsWithIdException, TiolkTrackException {
 
-		try {
-			LOGGER.info("Retrieving Gps entity with id=\"{}\" from postgres database", gpsId);
-			checkIfExists(gpsId);
-			List<Location> locations = locationProvider.getLocationsForGps(gpsId);
+		LOGGER.info("Retrieving Gps entity with id=\"{}\" from postgres database", gpsId);
+		checkIfExists(gpsId);
+		List<Location> locations = locationProvider.getLocationsForGps(gpsId);
+		LOGGER.info("Successfully retrieved Gps entity with id=\"{}\" from postgres database", gpsId);
 
-			return new Gps(gpsId, locations);
+		return new Gps(gpsId, locations);
+	}
+
+	@Override
+	public boolean exists(String gpsId) throws TiolkTrackException {
+
+		String query = "SELECT * FROM gps WHERE id=?";
+		try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+			preparedStatement.setString(1, gpsId);
+
+			return !isResultEmpty(preparedStatement);
 		} catch (SQLException e) {
-			LOGGER.error("Error while retrieving Gps entity with id=\"{}\" from postgres", gpsId, e);
-			throw new TiolkTrackException(String.format("Cannot retrieve Gps with id=\"%s\" from database", gpsId), e);
+			LOGGER.error("Error while checking if GPS with id = \"{}\" exists in database", gpsId, e);
+			throw new TiolkTrackException(String.format("Error while checking if GPS with id = \"%s\" exists in database", gpsId), e);
 		}
 	}
 
-	private void checkIfExists(String gpsId) throws SQLException {
+	private boolean isResultEmpty(PreparedStatement preparedStatement) throws SQLException {
+
+		try (ResultSet resultSet = preparedStatement.executeQuery()) {
+			return !resultSet.next();
+		}
+	}
+
+	private void checkIfExists(String gpsId) {
 
 		if (!exists(gpsId)) {
 			LOGGER.error("No Gps entity with id=\"{}\" in postgres database", gpsId);
 			throw new NoGpsWithIdException(String.format("No GPS with id=\"%s\" exists", gpsId));
-		}
-	}
-
-	private boolean exists(String gpsId) throws SQLException {
-
-		String query = "SELECT * FROM gps WHERE id=?";
-		ResultSet resultSet = null;
-		try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-
-			preparedStatement.setString(1, gpsId);
-			resultSet = preparedStatement.executeQuery();
-
-			return resultSet.next();
-		} finally {
-			if (resultSet != null) {
-				resultSet.close();
-			}
 		}
 	}
 }

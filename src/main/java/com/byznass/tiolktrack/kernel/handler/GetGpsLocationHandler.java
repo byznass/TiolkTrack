@@ -9,19 +9,19 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Inject;
 import java.util.Optional;
 
-public class GpsLocationById {
+public class GetGpsLocationHandler {
 
-	private static final Logger LOGGER = LoggerFactory.getLogger(GpsLocationById.class);
+	private static final Logger LOGGER = LoggerFactory.getLogger(GetGpsLocationHandler.class);
 
 	private final GpsProvider gpsProvider;
 
 	@Inject
-	GpsLocationById(GpsProvider gpsProvider) {
+	GetGpsLocationHandler(GpsProvider gpsProvider) {
 
 		this.gpsProvider = gpsProvider;
 	}
 
-	public Location execute(String gpsId) {
+	public Location getLastLocation(String gpsId) {
 
 		LOGGER.info("Trying to get current location of GPS with id=\"{}\"", gpsId);
 		Gps gps = gpsProvider.getGpsById(gpsId);

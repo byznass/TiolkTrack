@@ -36,4 +36,23 @@
         </sql>
     </changeSet>
 
+    <changeSet id="0.1.3" author="byznass">
+        <sql>
+            CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+        </sql>
+    </changeSet>
+
+    <changeSet id="0.1.4" author="byznass">
+        <sql>
+            ALTER TABLE location
+            ALTER COLUMN id TYPE uuid USING uuid_generate_v1();
+        </sql>
+    </changeSet>
+
+    <changeSet id="0.1.5" author="byznass">
+        <sql>
+            ALTER TABLE location ALTER COLUMN id SET DEFAULT uuid_generate_v1()
+        </sql>
+    </changeSet>
+
 </databaseChangeLog>

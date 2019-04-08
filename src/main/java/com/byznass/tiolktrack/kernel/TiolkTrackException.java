@@ -9,4 +9,9 @@ public class TiolkTrackException extends RuntimeException {
 
 		super(message, reason);
 	}
+
+	public TiolkTrackException(String message) {
+
+		super(message);
+	}
 }

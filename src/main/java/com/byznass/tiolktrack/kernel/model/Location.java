@@ -6,15 +6,12 @@ import java.time.ZonedDateTime;
 @Singleton
 public class Location {
 
-	private final String id;
 	private final String latitude;
 	private final String longitude;
 	private final ZonedDateTime time;
 	private final String gpsId;
 
-	public Location(String id, String latitude, String longitude, ZonedDateTime time, String gpsId) {
-
-		this.id = id;
+	public Location(String latitude, String longitude, ZonedDateTime time, String gpsId) {
 
 		this.latitude = latitude;
 		this.longitude = longitude;
@@ -40,10 +37,5 @@ public class Location {
 	public String getGpsId() {
 
 		return gpsId;
-	}
-
-	public String getId() {
-
-		return id;
 	}
 }

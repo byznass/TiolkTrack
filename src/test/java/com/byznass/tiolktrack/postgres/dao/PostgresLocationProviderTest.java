@@ -76,13 +76,13 @@ public class PostgresLocationProviderTest {
 		assertEquals("134", location.getGpsId());
 		assertEquals("lat1", location.getLatitude());
 		assertEquals("long1", location.getLongitude());
-		assertEquals(ZonedDateTime.of(2019, 4, 5, 6, 7, 3, 2, ZoneId.of("Z")), location.getTime());
+		assertEquals(ZonedDateTime.of(2019, 4, 5, 6, 7, 3, 2, ZoneId.of("UTC")), location.getTime());
 
 		location = locations.get(1);
 		assertEquals("134", location.getGpsId());
 		assertEquals("lat2", location.getLatitude());
 		assertEquals("long2", location.getLongitude());
-		assertEquals(ZonedDateTime.of(2020, 4, 5, 6, 7, 3, 2, ZoneId.of("Z")), location.getTime());
+		assertEquals(ZonedDateTime.of(2020, 4, 5, 6, 7, 3, 2, ZoneId.of("UTC")), location.getTime());
 
 	}
 

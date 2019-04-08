@@ -6,4 +6,6 @@ import com.byznass.tiolktrack.kernel.model.Gps;
 public interface GpsProvider {
 
 	Gps getGpsById(String gpsId) throws NoGpsWithIdException, TiolkTrackException;
+
+	boolean exists(String gpsId) throws TiolkTrackException;
 }
