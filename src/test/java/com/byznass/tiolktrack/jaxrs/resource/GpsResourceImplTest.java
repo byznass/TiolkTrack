@@ -1,5 +1,7 @@
 package com.byznass.tiolktrack.jaxrs.resource;
 
+import com.byznass.tiolktrack.jaxrs.resource.dto.InvalidDtoException;
+import com.byznass.tiolktrack.jaxrs.resource.dto.LocationValidator;
 import com.byznass.tiolktrack.jaxrs.resource.dto.mapper.LocationMapper;
 import com.byznass.tiolktrack.kernel.TiolkTrackException;
 import com.byznass.tiolktrack.kernel.handler.GetGpsLocationHandler;
@@ -9,12 +11,10 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 
 import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 
 public class GpsResourceImplTest {
@@ -25,6 +25,8 @@ public class GpsResourceImplTest {
 	private LocationMapper locationMapper;
 	@Mock
 	private PersistLocationHandler persistLocationHandler;
+	@Mock
+	private LocationValidator locationValidator;
 
 	private GpsResourceImpl gpsResource;
 
@@ -33,7 +35,8 @@ public class GpsResourceImplTest {
 
 		initMocks(this);
 
-		gpsResource = new GpsResourceImpl(getGpsLocationHandler, persistLocationHandler, locationMapper);
+		gpsResource =
+				new GpsResourceImpl(getGpsLocationHandler, persistLocationHandler, locationMapper, locationValidator);
 	}
 
 	@Test
@@ -41,9 +44,8 @@ public class GpsResourceImplTest {
 
 		// setup
 		String gpsId = "xyz";
-		ZonedDateTime time = ZonedDateTime.of(2019, 3, 24, 22, 56, 23, 11, ZoneId.of("UTC"));
-		Location modelLocation =
-				new Location("47.151154", "27.589897", time, gpsId);
+		LocalDateTime time = LocalDateTime.of(2019, 3, 24, 22, 56, 23, 11);
+		Location modelLocation = new Location("47.151154", "27.589897", time, gpsId);
 		com.byznass.tiolktrack.jaxrs.resource.dto.Location expectedLocation =
 				new com.byznass.tiolktrack.jaxrs.resource.dto.Location("47.151154", "27.589897", time.toString());
 
@@ -72,7 +74,7 @@ public class GpsResourceImplTest {
 	@Test(expected = TiolkTrackException.class)
 	public void givenExceptionWhenStoringLocationThenRethrow() {
 
-		ZonedDateTime time = ZonedDateTime.now();
+		LocalDateTime time = LocalDateTime.now();
 
 		com.byznass.tiolktrack.jaxrs.resource.dto.Location location =
 				new com.byznass.tiolktrack.jaxrs.resource.dto.Location("111", "222", time.toString());
@@ -87,7 +89,7 @@ public class GpsResourceImplTest {
 	@Test
 	public void givenPersistingLocationThenReturnCorrectResponse() {
 
-		ZonedDateTime time = ZonedDateTime.now();
+		LocalDateTime time = LocalDateTime.now();
 
 		com.byznass.tiolktrack.jaxrs.resource.dto.Location location =
 				new com.byznass.tiolktrack.jaxrs.resource.dto.Location("111", "222", time.toString());
@@ -104,5 +106,16 @@ public class GpsResourceImplTest {
 		com.byznass.tiolktrack.jaxrs.resource.dto.Location actual = gpsResource.createLocationForGps("xxx", location);
 
 		assertEquals(expected, actual);
+	}
+
+	@Test(expected = InvalidDtoException.class)
+	public void givenInvalidDtoThenRethrowException() {
+
+		com.byznass.tiolktrack.jaxrs.resource.dto.Location location =
+				mock(com.byznass.tiolktrack.jaxrs.resource.dto.Location.class);
+
+		doThrow(InvalidDtoException.class).when(locationValidator).validate(location);
+
+		gpsResource.createLocationForGps("xxx", location);
 	}
 }

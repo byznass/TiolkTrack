@@ -1,6 +1,7 @@
 package com.byznass.tiolktrack.jaxrs.resource;
 
 import com.byznass.tiolktrack.jaxrs.resource.dto.Location;
+import com.byznass.tiolktrack.jaxrs.resource.dto.LocationValidator;
 import com.byznass.tiolktrack.jaxrs.resource.dto.mapper.LocationMapper;
 import com.byznass.tiolktrack.kernel.handler.GetGpsLocationHandler;
 import com.byznass.tiolktrack.kernel.handler.PersistLocationHandler;
@@ -16,31 +17,38 @@ public class GpsResourceImpl implements GpsResource {
 	private final GetGpsLocationHandler getGpsLocationHandler;
 	private final PersistLocationHandler persistLocationHandler;
 	private final LocationMapper locationMapper;
+	private final LocationValidator locationValidator;
 
 	@Inject
-	GpsResourceImpl(GetGpsLocationHandler getGpsLocationHandler, PersistLocationHandler persistLocationHandler, LocationMapper locationMapper) {
+	GpsResourceImpl(GetGpsLocationHandler getGpsLocationHandler, PersistLocationHandler persistLocationHandler, LocationMapper locationMapper, LocationValidator locationValidator) {
 
 		this.getGpsLocationHandler = getGpsLocationHandler;
 		this.persistLocationHandler = persistLocationHandler;
 		this.locationMapper = locationMapper;
+		this.locationValidator = locationValidator;
 	}
 
 	@Override
 	public Location getLocationById(String gpsId) {
 
-		LOGGER.info("Request for last location for GPS with id=\"{}\"", gpsId);
+		LOGGER.info("Request for last location for GPS with id=\'{}\'", gpsId);
 		com.byznass.tiolktrack.kernel.model.Location location = getGpsLocationHandler.getLastLocation(gpsId);
-		LOGGER.info("Returning last location of GPS with id=\"{}\"", gpsId);
+		LOGGER.info("Returning last location of GPS with id=\'{}\'", gpsId);
 
 		return locationMapper.toDto(location);
 	}
 
 	@Override
-	public Location createLocationForGps(String gpsId, Location location) {
+	public Location createLocationForGps(String gpsId, Location locationDto) {
 
-		com.byznass.tiolktrack.kernel.model.Location modelLocation =
-				persistLocationHandler.persist(locationMapper.toModel(location, gpsId));
+		LOGGER.info("Request for creating a location for GPS with id=\'{}\'", gpsId);
 
-		return locationMapper.toDto(modelLocation);
+		locationValidator.validate(locationDto);
+		com.byznass.tiolktrack.kernel.model.Location locationModel = locationMapper.toModel(locationDto, gpsId);
+		com.byznass.tiolktrack.kernel.model.Location result = persistLocationHandler.persist(locationModel);
+
+		LOGGER.info("Created a location for GPS with id=\'{}\'", gpsId);
+
+		return locationMapper.toDto(result);
 	}
 }

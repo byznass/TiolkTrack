@@ -14,7 +14,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 
 import static java.util.Arrays.asList;
 import static org.hamcrest.Matchers.containsInAnyOrder;
@@ -48,8 +48,8 @@ public class PostgresGpsProviderTest {
 		String gpsId = "123";
 
 		Location[] locations = new Location[]{
-				new Location("xxx", "yyy", ZonedDateTime.now().minusDays(1), gpsId),
-				new Location( "xxx", "yyy", ZonedDateTime.now().minusDays(2), gpsId)
+				new Location("xxx", "yyy", LocalDateTime.now().minusDays(1), gpsId),
+				new Location("xxx", "yyy", LocalDateTime.now().minusDays(2), gpsId)
 		};
 
 		PreparedStatement preparedStatement = mock(PreparedStatement.class);

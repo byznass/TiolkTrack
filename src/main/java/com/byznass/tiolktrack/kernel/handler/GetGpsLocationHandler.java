@@ -23,16 +23,16 @@ public class GetGpsLocationHandler {
 
 	public Location getLastLocation(String gpsId) {
 
-		LOGGER.info("Trying to get current location of GPS with id=\"{}\"", gpsId);
+		LOGGER.info("Trying to get current location of GPS with id=\'{}\'", gpsId);
 		Gps gps = gpsProvider.getGpsById(gpsId);
 
 		Optional<Location> location = gps.getLastLocation();
 		if (!location.isPresent()) {
-			LOGGER.error("GPS with id=\"{}\" has no location", gpsId);
+			LOGGER.error("GPS with id=\'{}\' has no location", gpsId);
 			throw new NoLocationForGpsException(gpsId);
 		}
 
-		LOGGER.info("Successfully retrieved last location for GPS with id=\"{}\"", gpsId);
+		LOGGER.info("Successfully retrieved last location for GPS with id=\'{}\'", gpsId);
 
 		return location.get();
 	}

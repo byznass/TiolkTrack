@@ -1,12 +1,20 @@
 package com.byznass.tiolktrack.jaxrs.resource.dto.mapper;
 
+import com.byznass.tiolktrack.config.TimeProvider;
 import com.byznass.tiolktrack.jaxrs.resource.dto.Location;
 
+import javax.inject.Inject;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 
 public class LocationMapper {
+
+	private TimeProvider timeProvider;
+
+	@Inject
+	public LocationMapper(TimeProvider timeProvider) {
+
+		this.timeProvider = timeProvider;
+	}
 
 	public Location toDto(com.byznass.tiolktrack.kernel.model.Location modelLocation) {
 
@@ -15,7 +23,7 @@ public class LocationMapper {
 
 	public com.byznass.tiolktrack.kernel.model.Location toModel(Location location, String gpsId) {
 
-		ZonedDateTime time = LocalDateTime.parse(location.getTime()).atZone(ZoneId.of("UTC"));
+		LocalDateTime time = timeProvider.getCurrentTime();
 
 		return new com.byznass.tiolktrack.kernel.model.Location(location.getLatitude(), location.getLongitude(), time, gpsId);
 	}

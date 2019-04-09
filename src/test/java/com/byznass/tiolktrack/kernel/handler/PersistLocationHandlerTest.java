@@ -9,7 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
@@ -35,7 +35,7 @@ public class PersistLocationHandlerTest {
 	@Test(expected = NoGpsWithIdException.class)
 	public void givenNonExistentGpsWithGivenIdWhenPersistingThenThrowException() {
 
-		Location location = new Location("xxx", "yyy", ZonedDateTime.now(), "zzz");
+		Location location = new Location("xxx", "yyy", LocalDateTime.now(), "zzz");
 
 		when(gpsProvider.exists("zzz")).thenReturn(false);
 
@@ -45,7 +45,7 @@ public class PersistLocationHandlerTest {
 	@Test
 	public void givenExistingGpsWhilePersistingLocationThenSuccess() {
 
-		Location location = new Location("xxx", "yyy", ZonedDateTime.now(), "zzz");
+		Location location = new Location("xxx", "yyy", LocalDateTime.now(), "zzz");
 
 		when(gpsProvider.exists("zzz")).thenReturn(true);
 
@@ -58,7 +58,7 @@ public class PersistLocationHandlerTest {
 	@Test(expected = TiolkTrackException.class)
 	public void givenExceptionWhilePersistingLocationThenRethrow() {
 
-		Location location = new Location("xxx", "yyy", ZonedDateTime.now(), "zzz");
+		Location location = new Location("xxx", "yyy", LocalDateTime.now(), "zzz");
 
 		when(gpsProvider.exists("zzz")).thenReturn(true);
 		doThrow(TiolkTrackException.class).when(locationPersister).persistLocation(location);

@@ -9,8 +9,6 @@ import org.mockito.Mock;
 
 import java.sql.*;
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -45,7 +43,8 @@ public class PostgresLocationProviderTest {
 	}
 
 	@Test
-	public void givenNoLinesFromDatabaseThenReturnEmptyListOfLocations() throws Exception{
+	public void givenNoLinesFromDatabaseThenReturnEmptyListOfLocations() throws Exception {
+
 		PreparedStatement preparedStatement = mock(PreparedStatement.class);
 		ResultSet resultSet = mock(ResultSet.class);
 
@@ -76,13 +75,13 @@ public class PostgresLocationProviderTest {
 		assertEquals("134", location.getGpsId());
 		assertEquals("lat1", location.getLatitude());
 		assertEquals("long1", location.getLongitude());
-		assertEquals(ZonedDateTime.of(2019, 4, 5, 6, 7, 3, 2, ZoneId.of("UTC")), location.getTime());
+		assertEquals(LocalDateTime.of(2019, 4, 5, 6, 7, 3, 2), location.getTime());
 
 		location = locations.get(1);
 		assertEquals("134", location.getGpsId());
 		assertEquals("lat2", location.getLatitude());
 		assertEquals("long2", location.getLongitude());
-		assertEquals(ZonedDateTime.of(2020, 4, 5, 6, 7, 3, 2, ZoneId.of("UTC")), location.getTime());
+		assertEquals(LocalDateTime.of(2020, 4, 5, 6, 7, 3, 2), location.getTime());
 
 	}
 

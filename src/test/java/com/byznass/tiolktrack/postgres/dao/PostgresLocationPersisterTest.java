@@ -11,7 +11,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
@@ -34,12 +34,12 @@ public class PostgresLocationPersisterTest {
 	@Test(expected = TiolkTrackException.class)
 	public void givenSQLExceptionWhilePersistingLocationThenThrowException() throws Exception {
 
-		ZonedDateTime time = ZonedDateTime.now();
+		LocalDateTime time = LocalDateTime.now();
 		Location location = new Location("lat1", "long2", time, "gpsid1");
 		PreparedStatement preparedStatement = mock(PreparedStatement.class);
 
 		when(connection.prepareStatement(anyString())).thenReturn(preparedStatement);
-		doThrow(SQLException.class).when(preparedStatement).setTimestamp(anyInt(), eq(Timestamp.valueOf(time.toLocalDateTime())));
+		doThrow(SQLException.class).when(preparedStatement).setTimestamp(anyInt(), eq(Timestamp.valueOf(time)));
 
 		locationPersister.persistLocation(location);
 	}
@@ -47,7 +47,7 @@ public class PostgresLocationPersisterTest {
 	@Test(expected = TiolkTrackException.class)
 	public void givenNoAffectedRowsWhilePersistingLocationThenThrowException() throws Exception {
 
-		ZonedDateTime time = ZonedDateTime.now();
+		LocalDateTime time = LocalDateTime.now();
 		Location location = new Location("lat1", "long2", time, "gpsid1");
 		PreparedStatement preparedStatement = mock(PreparedStatement.class);
 
@@ -60,7 +60,7 @@ public class PostgresLocationPersisterTest {
 	@Test
 	public void givenOneAffectedRowWhilePersistingLocationThenSuccess() throws Exception {
 
-		ZonedDateTime time = ZonedDateTime.now();
+		LocalDateTime time = LocalDateTime.now();
 		Location location = new Location("lat1", "long2", time, "gpsid1");
 		PreparedStatement preparedStatement = mock(PreparedStatement.class);
 

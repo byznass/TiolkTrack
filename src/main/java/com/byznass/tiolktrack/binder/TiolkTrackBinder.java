@@ -1,10 +1,16 @@
 package com.byznass.tiolktrack.binder;
 
 import com.byznass.tiolktrack.config.PropertyProvider;
+import com.byznass.tiolktrack.config.SystemTimeProvider;
+import com.byznass.tiolktrack.config.TimeProvider;
 import com.byznass.tiolktrack.jaxrs.resource.GpsResource;
 import com.byznass.tiolktrack.jaxrs.resource.GpsResourceImpl;
+import com.byznass.tiolktrack.jaxrs.resource.dto.LocationValidator;
 import com.byznass.tiolktrack.jaxrs.resource.dto.mapper.LocationMapper;
 import com.byznass.tiolktrack.jaxrs.resource.exception.mapper.NoGpsWIthIdExceptionMapper;
+import com.byznass.tiolktrack.jaxrs.resource.exception.mapper.NoLocationForGpsExceptionMapper;
+import com.byznass.tiolktrack.jaxrs.resource.exception.mapper.RuntimeExceptionMapper;
+import com.byznass.tiolktrack.jaxrs.resource.exception.mapper.TiolkTrackExceptionMapper;
 import com.byznass.tiolktrack.kernel.dao.GpsProvider;
 import com.byznass.tiolktrack.kernel.dao.LocationPersister;
 import com.byznass.tiolktrack.kernel.dao.LocationProvider;
@@ -44,12 +50,17 @@ public class TiolkTrackBinder extends AbstractBinder {
 
 		bind(LocationMapper.class).to(LocationMapper.class);
 		bind(NoGpsWIthIdExceptionMapper.class).to(NoGpsWIthIdExceptionMapper.class);
+		bind(NoLocationForGpsExceptionMapper.class).to(NoLocationForGpsExceptionMapper.class);
+		bind(RuntimeExceptionMapper.class).to(RuntimeExceptionMapper.class);
+		bind(TiolkTrackExceptionMapper.class).to(TiolkTrackExceptionMapper.class);
+		bind(LocationValidator.class).to(LocationValidator.class);
 	}
 
 	private void bindEnvironmentResources() {
 
 		bind(PropertyProvider.class).to(PropertyProvider.class);
 		bind(com.byznass.tiolktrack.postgres.ConnectionFactory.class).to(ConnectionProvider.class);
+		bind(SystemTimeProvider.class).to(TimeProvider.class);
 
 		bindFactory(ConnectionFactory.class).to(Connection.class);
 	}

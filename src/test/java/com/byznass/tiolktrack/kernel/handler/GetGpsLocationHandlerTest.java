@@ -8,8 +8,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static org.junit.Assert.assertEquals;
@@ -38,7 +37,7 @@ public class GetGpsLocationHandlerTest {
 		String gpsId = "id";
 		Gps gps = mock(Gps.class);
 
-		ZonedDateTime time = ZonedDateTime.of(2019, 3, 24, 23, 8, 10, 0, ZoneId.of("UTC"));
+		LocalDateTime time = LocalDateTime.of(2019, 3, 24, 23, 8, 10, 0);
 		Location expectedLocation = new Location("456", "123", time, gpsId);
 
 		when(gpsProvider.getGpsById(gpsId)).thenReturn(gps);

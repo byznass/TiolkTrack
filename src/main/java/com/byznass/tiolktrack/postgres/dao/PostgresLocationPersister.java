@@ -24,13 +24,13 @@ public class PostgresLocationPersister implements LocationPersister {
 	@Override
 	public void persistLocation(Location location) {
 
-		LOGGER.info("Persisting location with gpsId=\"{}\" into postgres database", location.getGpsId());
+		LOGGER.info("Persisting location with gpsId=\'{}\' into postgres database", location.getGpsId());
 
 		String query = "INSERT INTO location (latitude, longitude, time, gpsId) VALUES(?, ?, ?, ?);";
 		try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
 			preparedStatement.setString(1, location.getLatitude());
 			preparedStatement.setString(2, location.getLongitude());
-			preparedStatement.setTimestamp(3, Timestamp.valueOf(location.getTime().toLocalDateTime()));
+			preparedStatement.setTimestamp(3, Timestamp.valueOf(location.getTime()));
 			preparedStatement.setString(4, location.getGpsId());
 
 			int affectedRows = preparedStatement.executeUpdate();
@@ -43,8 +43,8 @@ public class PostgresLocationPersister implements LocationPersister {
 			LOGGER.info("Successfully persisted location into database.");
 
 		} catch (SQLException e) {
-			LOGGER.error("Error while persisting location with gpsId=\"{}\" into postgres database", location.getGpsId(), e);
-			throw new TiolkTrackException(String.format("Cannot persist location for gps with id =  \"%s\" into database", location.getGpsId()), e);
+			LOGGER.error("Error while persisting location with gpsId=\'{}\' into postgres database", location.getGpsId(), e);
+			throw new TiolkTrackException(String.format("Cannot persist location for gps with id =  \'%s\' into database", location.getGpsId()), e);
 		}
 	}
 }

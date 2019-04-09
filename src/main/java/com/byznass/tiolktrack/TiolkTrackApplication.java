@@ -10,6 +10,7 @@ import com.byznass.tiolktrack.jaxrs.resource.exception.mapper.TiolkTrackExceptio
 import com.byznass.tiolktrack.postgres.ConnectionFactory;
 import com.byznass.tiolktrack.postgres.ConnectionProvider;
 import com.byznass.tiolktrack.postgres.LiquibaseUpdateRunner;
+import org.glassfish.jersey.jackson.JacksonFeature;
 import org.glassfish.jersey.server.ResourceConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,6 +28,7 @@ public class TiolkTrackApplication extends ResourceConfig {
 		initializeApplication();
 
 		registerInstances(new TiolkTrackBinder());
+		register(JacksonFeature.class);
 
 		register(GpsResource.class);
 
