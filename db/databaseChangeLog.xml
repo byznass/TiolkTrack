@@ -36,4 +36,19 @@
         </sql>
     </changeSet>
 
+    <changeSet id="0.1.3" author="byznass">
+        <preConditions onFail="MARK_RAN">
+            <not>
+                <tableExists tableName="client"></tableExists>
+            </not>
+        </preConditions>
+        <sql>
+            CREATE TABLE client(
+                id VARCHAR(50) PRIMARY KEY,
+                passHash BYTEA NOT NULL,
+                passSalt BYTEA NOT NULL
+            );
+        </sql>
+    </changeSet>
+
 </databaseChangeLog>
