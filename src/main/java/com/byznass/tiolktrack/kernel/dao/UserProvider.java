@@ -4,5 +4,5 @@ import com.byznass.tiolktrack.kernel.model.User;
 
 public interface UserProvider {
 
-	User getUser(String userId);
+	User getUser(String userId) throws NoUserWithSuchIdException;
 }

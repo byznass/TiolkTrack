@@ -27,7 +27,7 @@ public class PostgresUserProvider implements UserProvider {
 
 
 	@Override
-	public User getUser(String userId) {
+	public User getUser(String userId) throws NoUserWithSuchIdException {
 
 		LOGGER.info("Retrieving User with userId=\"{}\" from postgres database", userId);
 

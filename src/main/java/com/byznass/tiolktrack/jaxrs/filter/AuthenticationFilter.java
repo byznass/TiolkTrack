@@ -9,7 +9,8 @@ import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.ext.Provider;
 
-import static com.byznass.tiolktrack.jaxrs.filter.AuthenticationException.Reason.*;
+import static com.byznass.tiolktrack.jaxrs.filter.AuthenticationException.Reason.INVALID_AUTHENTICATION_METHOD;
+import static com.byznass.tiolktrack.jaxrs.filter.AuthenticationException.Reason.INVALID_FORMAT;
 import static javax.ws.rs.core.HttpHeaders.AUTHORIZATION;
 
 @Provider
@@ -17,7 +18,7 @@ import static javax.ws.rs.core.HttpHeaders.AUTHORIZATION;
 public class AuthenticationFilter implements ContainerRequestFilter {
 
 	private static final String AUTHENTICATION_SCHEME = "bearer ";
-	private static final String ALL_LEADING_SPACEC = "^ *";
+	private static final String ALL_LEADING_SPACES = "^ *";
 	private static final String EMPTY = "";
 	private static final String SPACE = " ";
 
@@ -54,7 +55,7 @@ public class AuthenticationFilter implements ContainerRequestFilter {
 
 	private void validateUserToken(String userIdWithToken) throws AuthenticationException {
 
-		userIdWithToken = userIdWithToken.replaceFirst(ALL_LEADING_SPACEC, EMPTY);
+		userIdWithToken = userIdWithToken.replaceFirst(ALL_LEADING_SPACES, EMPTY);
 		String[] splitUserIdWithToken = userIdWithToken.split(SPACE, -1);
 
 		if (!userIdWithToken.contains(" ") || splitUserIdWithToken.length < 2) {

@@ -5,6 +5,7 @@ import com.byznass.tiolktrack.jaxrs.filter.AuthenticationFilter;
 import com.byznass.tiolktrack.jaxrs.resource.GpsResource;
 import com.byznass.tiolktrack.jaxrs.resource.GpsResourceImpl;
 import com.byznass.tiolktrack.jaxrs.resource.dto.mapper.LocationMapper;
+import com.byznass.tiolktrack.kernel.crypto.TokenEncrypter;
 import com.byznass.tiolktrack.kernel.dao.GpsProvider;
 import com.byznass.tiolktrack.kernel.dao.LocationProvider;
 import com.byznass.tiolktrack.kernel.dao.UserProvider;
@@ -36,6 +37,8 @@ public class TiolkTrackBinder extends AbstractBinder {
 		bind(PostgresGpsProvider.class).to(GpsProvider.class);
 		bind(PostgresLocationProvider.class).to(LocationProvider.class);
 		bind(PostgresUserProvider.class).to(UserProvider.class);
+
+		bind(TokenEncrypter.class).to(TokenEncrypter.class);
 	}
 
 	private void bindJaxRsResources() {

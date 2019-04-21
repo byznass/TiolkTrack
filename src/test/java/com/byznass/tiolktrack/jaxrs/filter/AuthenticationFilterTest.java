@@ -1,6 +1,5 @@
 package com.byznass.tiolktrack.jaxrs.filter;
 
-import com.byznass.tiolktrack.kernel.TiolkTrackException;
 import com.byznass.tiolktrack.kernel.handler.AuthenticationHandler;
 import org.junit.Before;
 import org.junit.Test;
@@ -9,13 +8,11 @@ import org.mockito.Mockito;
 
 import javax.ws.rs.container.ContainerRequestContext;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-
 import static com.byznass.tiolktrack.jaxrs.filter.AuthenticationException.Reason.INVALID_AUTHENTICATION_METHOD;
 import static com.byznass.tiolktrack.jaxrs.filter.AuthenticationException.Reason.INVALID_FORMAT;
 import static javax.ws.rs.core.HttpHeaders.AUTHORIZATION;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
@@ -159,28 +156,4 @@ public class AuthenticationFilterTest {
 
 		verify(authenticationHandler).authenticate("userId", "  tok en ");
 	}
-
-	@Test
-	public void test() {
-
-		String paroli = "byznass";
-		String salt = "pepeni murati";
-
-		MessageDigest messageDigest = null;
-		try {
-			messageDigest = MessageDigest.getInstance("SHA-256");
-			messageDigest.update(salt.getBytes());
-
-			byte[] hash = messageDigest.digest(paroli.getBytes());
-			for(byte b : salt.getBytes()) {
-				String s1 = String.format("%02x", b);
-				System.out.print(s1);
-			}
-
-		} catch (NoSuchAlgorithmException e) {
-			throw new TiolkTrackException("Authentication validation failed", e);
-		}
-	}
-
-
 }
