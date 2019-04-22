@@ -11,14 +11,14 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 public class PostgresLocationProvider implements LocationProvider {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(PostgresLocationProvider.class);
+
 	private final Connection connection;
 
 	@Inject
@@ -30,7 +30,7 @@ public class PostgresLocationProvider implements LocationProvider {
 	@Override
 	public List<Location> getLocationsForGps(String gpsId) {
 
-		LOGGER.info("Retrieving Locations with gpsId=\"{}\" from postgres database", gpsId);
+		LOGGER.info("Retrieving Locations with gpsId=\'{}\' from postgres database", gpsId);
 
 		String query = "SELECT * FROM location WHERE gpsId=?";
 		try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
@@ -39,8 +39,8 @@ public class PostgresLocationProvider implements LocationProvider {
 
 			return extractLocations(resultSet);
 		} catch (SQLException e) {
-			LOGGER.error("Error while retrieving Locations with gpsId=\"{}\" from postgres database", gpsId, e);
-			throw new TiolkTrackException(String.format("Cannot retrieve Locations for gps with id =  \"%s\" from database", gpsId), e);
+			LOGGER.error("Error while retrieving Locations with gpsId=\'{}\' from postgres database", gpsId, e);
+			throw new TiolkTrackException(String.format("Cannot retrieve Locations for gps with id =  \'%s\' from database", gpsId), e);
 		}
 	}
 
@@ -58,12 +58,11 @@ public class PostgresLocationProvider implements LocationProvider {
 
 	private Location getLocation(ResultSet resultSet) throws SQLException {
 
-		String id = resultSet.getString("id");
 		String latitude = resultSet.getString("latitude");
 		String longitude = resultSet.getString("longitude");
-		ZonedDateTime time = resultSet.getTimestamp("time").toLocalDateTime().atZone(ZoneId.of("Z"));
+		LocalDateTime time = resultSet.getTimestamp("time").toLocalDateTime();
 		String gpsIdOfCurrentLocation = resultSet.getString("gpsId");
 
-		return new Location(id, latitude, longitude, time, gpsIdOfCurrentLocation);
+		return new Location(latitude, longitude, time, gpsIdOfCurrentLocation);
 	}
 }

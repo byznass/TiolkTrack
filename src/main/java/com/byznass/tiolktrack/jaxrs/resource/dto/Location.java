@@ -1,20 +1,23 @@
 package com.byznass.tiolktrack.jaxrs.resource.dto;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.Objects;
 
 public class Location {
 
-	private static final String TO_STRING_FORMAT =
-			"{\"latitude\": \"%s\", \"longitude\": \"%s\", \"lastUpdate\": \"%s\"}";
+	private static final String TO_STRING_FORMAT = "{\"latitude\": \"%s\", \"longitude\": \"%s\", \"time\": \"%s\"}";
 	private static final String ALL_PARAMETERS_MUST_BE_NON_NULL = "All parameters must be non-null";
 
 	private String latitude;
 	private String longitude;
 	private String time;
 
-	public Location(String latitude, String longitude, String time) {
+	@JsonCreator
+	public Location(@JsonProperty("latitude") String latitude, @JsonProperty("longitude") String longitude, @JsonProperty("time") String time) {
 
-		if (latitude == null || longitude == null || time == null) {
+		if (latitude == null || longitude == null) {
 			throw new IllegalArgumentException(ALL_PARAMETERS_MUST_BE_NON_NULL);
 		}
 
@@ -51,12 +54,6 @@ public class Location {
 		this.longitude = longitude;
 	}
 
-	@Override
-	public String toString() {
-
-		return String.format(TO_STRING_FORMAT, latitude, longitude, time);
-	}
-
 	public String getTime() {
 
 		return time;
@@ -64,11 +61,13 @@ public class Location {
 
 	public void setTime(String time) {
 
-		if (time == null) {
-			throw new IllegalArgumentException(ALL_PARAMETERS_MUST_BE_NON_NULL);
-		}
-
 		this.time = time;
+	}
+
+	@Override
+	public String toString() {
+
+		return String.format(TO_STRING_FORMAT, latitude, longitude, time);
 	}
 
 	@Override
@@ -81,11 +80,11 @@ public class Location {
 		if (!(o instanceof Location)) {
 			return false;
 		}
-
 		Location location = (Location) o;
+
 		return latitude.equals(location.latitude) &&
 				longitude.equals(location.longitude) &&
-				time.equals(location.time);
+				Objects.equals(time, location.time);
 	}
 
 	@Override
