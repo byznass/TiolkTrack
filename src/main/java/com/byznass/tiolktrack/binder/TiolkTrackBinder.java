@@ -3,23 +3,28 @@ package com.byznass.tiolktrack.binder;
 import com.byznass.tiolktrack.config.PropertyProvider;
 import com.byznass.tiolktrack.config.SystemTimeProvider;
 import com.byznass.tiolktrack.config.TimeProvider;
+import com.byznass.tiolktrack.jaxrs.exception.mapper.NoGpsWIthIdExceptionMapper;
+import com.byznass.tiolktrack.jaxrs.exception.mapper.NoLocationForGpsExceptionMapper;
+import com.byznass.tiolktrack.jaxrs.exception.mapper.RuntimeExceptionMapper;
+import com.byznass.tiolktrack.jaxrs.exception.mapper.TiolkTrackExceptionMapper;
+import com.byznass.tiolktrack.jaxrs.filter.AuthenticationFilter;
 import com.byznass.tiolktrack.jaxrs.resource.GpsResource;
 import com.byznass.tiolktrack.jaxrs.resource.GpsResourceImpl;
 import com.byznass.tiolktrack.jaxrs.resource.dto.LocationValidator;
 import com.byznass.tiolktrack.jaxrs.resource.dto.mapper.LocationMapper;
-import com.byznass.tiolktrack.jaxrs.resource.exception.mapper.NoGpsWIthIdExceptionMapper;
-import com.byznass.tiolktrack.jaxrs.resource.exception.mapper.NoLocationForGpsExceptionMapper;
-import com.byznass.tiolktrack.jaxrs.resource.exception.mapper.RuntimeExceptionMapper;
-import com.byznass.tiolktrack.jaxrs.resource.exception.mapper.TiolkTrackExceptionMapper;
+import com.byznass.tiolktrack.kernel.crypto.TokenEncrypter;
 import com.byznass.tiolktrack.kernel.dao.GpsProvider;
 import com.byznass.tiolktrack.kernel.dao.LocationPersister;
 import com.byznass.tiolktrack.kernel.dao.LocationProvider;
+import com.byznass.tiolktrack.kernel.dao.UserProvider;
+import com.byznass.tiolktrack.kernel.handler.AuthenticationHandler;
 import com.byznass.tiolktrack.kernel.handler.GetGpsLocationHandler;
 import com.byznass.tiolktrack.kernel.handler.PersistLocationHandler;
 import com.byznass.tiolktrack.postgres.ConnectionProvider;
 import com.byznass.tiolktrack.postgres.dao.PostgresGpsProvider;
 import com.byznass.tiolktrack.postgres.dao.PostgresLocationPersister;
 import com.byznass.tiolktrack.postgres.dao.PostgresLocationProvider;
+import com.byznass.tiolktrack.postgres.dao.PostgresUserProvider;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 
 import java.sql.Connection;
@@ -38,10 +43,15 @@ public class TiolkTrackBinder extends AbstractBinder {
 
 		bind(GetGpsLocationHandler.class).to(GetGpsLocationHandler.class);
 		bind(PersistLocationHandler.class).to(PersistLocationHandler.class);
+		bind(AuthenticationHandler.class).to(AuthenticationHandler.class);
 
 		bind(PostgresGpsProvider.class).to(GpsProvider.class);
 		bind(PostgresLocationProvider.class).to(LocationProvider.class);
+		bind(PostgresUserProvider.class).to(UserProvider.class);
+
 		bind(PostgresLocationPersister.class).to(LocationPersister.class);
+
+		bind(TokenEncrypter.class).to(TokenEncrypter.class);
 	}
 
 	private void bindJaxRsResources() {
@@ -49,6 +59,7 @@ public class TiolkTrackBinder extends AbstractBinder {
 		bind(GpsResourceImpl.class).to(GpsResource.class);
 
 		bind(LocationMapper.class).to(LocationMapper.class);
+		bind(AuthenticationFilter.class).to(AuthenticationFilter.class);
 		bind(NoGpsWIthIdExceptionMapper.class).to(NoGpsWIthIdExceptionMapper.class);
 		bind(NoLocationForGpsExceptionMapper.class).to(NoLocationForGpsExceptionMapper.class);
 		bind(RuntimeExceptionMapper.class).to(RuntimeExceptionMapper.class);
