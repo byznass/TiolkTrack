@@ -34,7 +34,18 @@ public class PostgresUserProvider implements UserProvider {
 		String query = "SELECT * FROM client WHERE id=?";
 		try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
 			preparedStatement.setString(1, userId);
-			ResultSet resultSet = preparedStatement.executeQuery();
+
+			return extractUser(userId, preparedStatement);
+		} catch (SQLException e) {
+			LOGGER.error("Error while retrieving User with userId=\'{}\' from postgres database", userId, e);
+			throw new TiolkTrackException(String.format("Cannot retrieve User with userId =  \'%s\' from database", userId), e);
+		}
+
+	}
+
+	private User extractUser(String userId, PreparedStatement preparedStatement) throws SQLException {
+
+		try (ResultSet resultSet = preparedStatement.executeQuery()) {
 
 			if (!resultSet.next()) {
 				LOGGER.error("No User with userId=\"{}\" exist in postgres database", userId);
@@ -46,10 +57,6 @@ public class PostgresUserProvider implements UserProvider {
 			byte[] passSalt = resultSet.getBytes("passSalt");
 
 			return new User(id, passHash, passSalt);
-		} catch (SQLException e) {
-			LOGGER.error("Error while retrieving User with userId=\'{}\' from postgres database", userId, e);
-			throw new TiolkTrackException(String.format("Cannot retrieve User with userId =  \'%s\' from database", userId), e);
 		}
-
 	}
 }
