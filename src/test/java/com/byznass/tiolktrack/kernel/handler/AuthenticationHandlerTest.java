@@ -35,7 +35,7 @@ public class AuthenticationHandlerTest {
 		handler = new AuthenticationHandler(userProvider, tokenEncrypter);
 	}
 
-	@Test(expected = NoUserWithSuchIdException.class)
+	@Test(expected = AuthenticationException.class)
 	public void givenInvalidUserIdThenThrowException() {
 
 		when(userProvider.getUser("ionel")).thenThrow(NoUserWithSuchIdException.class);

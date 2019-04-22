@@ -1,4 +1,4 @@
-package com.byznass.tiolktrack.jaxrs.resource.exception.mapper;
+package com.byznass.tiolktrack.jaxrs.exception.mapper;
 
 import com.byznass.tiolktrack.jaxrs.filter.AuthenticationException;
 

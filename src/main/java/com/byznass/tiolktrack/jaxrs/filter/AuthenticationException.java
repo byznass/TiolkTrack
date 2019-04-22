@@ -6,7 +6,7 @@ public class AuthenticationException extends RuntimeException {
 
 		INVALID_AUTHENTICATION_METHOD("Provided authentication method is invalid. Only Bearer auth method is accepted"),
 		INVALID_FORMAT("Provided format for token is invalid. Correct format: 'Bearer <userId> <token>'"),
-		INVALID_TOKEN("Provided token is invalid");
+		INVALID_TOKEN("Provided <userId token> pair is invalid");
 
 		private String message;
 
@@ -27,6 +27,13 @@ public class AuthenticationException extends RuntimeException {
 	public AuthenticationException(Reason reason) {
 
 		super(reason.getMessage());
+
+		this.reason = reason;
+	}
+
+	public AuthenticationException(Reason reason, Throwable cause) {
+
+		super(reason.getMessage(), cause);
 
 		this.reason = reason;
 	}
