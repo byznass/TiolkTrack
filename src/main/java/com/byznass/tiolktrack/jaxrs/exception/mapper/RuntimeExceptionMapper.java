@@ -1,6 +1,4 @@
-package com.byznass.tiolktrack.jaxrs.resource.exception.mapper;
-
-import com.byznass.tiolktrack.kernel.TiolkTrackException;
+package com.byznass.tiolktrack.jaxrs.exception.mapper;
 
 import javax.ws.rs.core.Response;
 import javax.ws.rs.ext.ExceptionMapper;
@@ -10,12 +8,12 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE;
 import static javax.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR;
 
 @Provider
-public class TiolkTrackExceptionMapper implements ExceptionMapper<TiolkTrackException> {
+public class RuntimeExceptionMapper implements ExceptionMapper<RuntimeException> {
 
 	private static final String RESPONSE = "{\n\t\"error\": \"%s\"\n}";
 
 	@Override
-	public Response toResponse(TiolkTrackException exception) {
+	public Response toResponse(RuntimeException exception) {
 
 		return Response.status(INTERNAL_SERVER_ERROR)
 				.type(APPLICATION_JSON_TYPE)
