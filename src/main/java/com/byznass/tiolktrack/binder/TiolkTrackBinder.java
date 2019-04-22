@@ -3,10 +3,7 @@ package com.byznass.tiolktrack.binder;
 import com.byznass.tiolktrack.config.PropertyProvider;
 import com.byznass.tiolktrack.config.SystemTimeProvider;
 import com.byznass.tiolktrack.config.TimeProvider;
-import com.byznass.tiolktrack.jaxrs.exception.mapper.NoGpsWIthIdExceptionMapper;
-import com.byznass.tiolktrack.jaxrs.exception.mapper.NoLocationForGpsExceptionMapper;
-import com.byznass.tiolktrack.jaxrs.exception.mapper.RuntimeExceptionMapper;
-import com.byznass.tiolktrack.jaxrs.exception.mapper.TiolkTrackExceptionMapper;
+import com.byznass.tiolktrack.jaxrs.exception.mapper.*;
 import com.byznass.tiolktrack.jaxrs.filter.AuthenticationFilter;
 import com.byznass.tiolktrack.jaxrs.resource.GpsResource;
 import com.byznass.tiolktrack.jaxrs.resource.GpsResourceImpl;
@@ -48,7 +45,6 @@ public class TiolkTrackBinder extends AbstractBinder {
 		bind(PostgresGpsProvider.class).to(GpsProvider.class);
 		bind(PostgresLocationProvider.class).to(LocationProvider.class);
 		bind(PostgresUserProvider.class).to(UserProvider.class);
-
 		bind(PostgresLocationPersister.class).to(LocationPersister.class);
 
 		bind(TokenEncrypter.class).to(TokenEncrypter.class);
@@ -59,12 +55,17 @@ public class TiolkTrackBinder extends AbstractBinder {
 		bind(GpsResourceImpl.class).to(GpsResource.class);
 
 		bind(LocationMapper.class).to(LocationMapper.class);
+		bind(LocationValidator.class).to(LocationValidator.class);
+
 		bind(AuthenticationFilter.class).to(AuthenticationFilter.class);
+
+		bind(AuthenticationExceptionMapper.class).to(AuthenticationExceptionMapper.class);
 		bind(NoGpsWIthIdExceptionMapper.class).to(NoGpsWIthIdExceptionMapper.class);
 		bind(NoLocationForGpsExceptionMapper.class).to(NoLocationForGpsExceptionMapper.class);
+		bind(NoUserWithSuchIdExceptionMapper.class).to(NoUserWithSuchIdExceptionMapper.class);
 		bind(RuntimeExceptionMapper.class).to(RuntimeExceptionMapper.class);
 		bind(TiolkTrackExceptionMapper.class).to(TiolkTrackExceptionMapper.class);
-		bind(LocationValidator.class).to(LocationValidator.class);
+		bind(InvalidDtoExceptionMapper.class).to(InvalidDtoExceptionMapper.class);
 	}
 
 	private void bindEnvironmentResources() {

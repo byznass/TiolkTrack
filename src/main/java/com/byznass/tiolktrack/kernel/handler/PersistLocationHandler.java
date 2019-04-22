@@ -25,13 +25,10 @@ public class PersistLocationHandler {
 
 	public Location persist(Location location) {
 
-		//TODO add validation of latitude and longitude
-
+		//TODO(TT-31) add validation of latitude and longitude
 		LOGGER.info("Persisting location for GPS with id=\'{}\'", location.getGpsId());
-
 		checkIfGpsExists(location.getGpsId());
 		locationPersister.persistLocation(location);
-
 		LOGGER.info("Successfully persisted location for GPS with id=\'{}\'", location.getGpsId());
 
 		return location;
