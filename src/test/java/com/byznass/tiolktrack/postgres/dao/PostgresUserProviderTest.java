@@ -12,8 +12,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import static org.junit.Assert.assertArrayEquals;
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.MockitoAnnotations.initMocks;
@@ -72,6 +71,42 @@ public class PostgresUserProviderTest {
 		assertEquals("userId", user.getId());
 		assertArrayEquals(new byte[]{1, 2, 3}, user.getPassHash());
 		assertArrayEquals(new byte[]{4, 5, 6}, user.getPassSalt());
+	}
+
+	@Test
+	public void givenNonExistentUserWhenCheckingIfExistsThenReturnFalse() throws Exception {
+
+		PreparedStatement preparedStatement = mock(PreparedStatement.class);
+		ResultSet resultSet = createResultSet();
+
+		when(connection.prepareStatement(anyString())).thenReturn(preparedStatement);
+		when(preparedStatement.executeQuery()).thenReturn(resultSet);
+		when(resultSet.next()).thenReturn(false);
+
+		assertFalse(userProvider.exists("userId"));
+	}
+
+	@Test
+	public void givenExistentUserWhenCheckingIfExistsThenReturnTrue() throws Exception {
+
+		PreparedStatement preparedStatement = mock(PreparedStatement.class);
+		ResultSet resultSet = createResultSet();
+
+		when(connection.prepareStatement(anyString())).thenReturn(preparedStatement);
+		when(preparedStatement.executeQuery()).thenReturn(resultSet);
+
+		assertTrue(userProvider.exists("userId"));
+	}
+
+	@Test(expected = TiolkTrackException.class)
+	public void givenExceptionWhenCheckingIfUserIdExistsThenReturnThrowException() throws Exception {
+
+		PreparedStatement preparedStatement = mock(PreparedStatement.class);
+
+		when(connection.prepareStatement(anyString())).thenReturn(preparedStatement);
+		when(preparedStatement.executeQuery()).thenThrow(SQLException.class);
+
+		userProvider.exists("userId");
 	}
 
 	private ResultSet createResultSet() throws SQLException {

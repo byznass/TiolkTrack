@@ -43,6 +43,21 @@ public class PostgresUserProvider implements UserProvider {
 
 	}
 
+	@Override
+	public boolean exists(String userId) throws TiolkTrackException {
+
+		try {
+			LOGGER.info("Checking if a user with id = '{}' exists", userId);
+			getUser(userId);
+			LOGGER.info("User with id = '{}' exists", userId);
+
+			return true;
+		} catch (NoUserWithSuchIdException e) {
+			LOGGER.info("No user with id = '{}' exists", userId);
+			return false;
+		}
+	}
+
 	private User extractUser(String userId, PreparedStatement preparedStatement) throws SQLException {
 
 		try (ResultSet resultSet = preparedStatement.executeQuery()) {

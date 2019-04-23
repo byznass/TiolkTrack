@@ -5,6 +5,7 @@ import com.byznass.tiolktrack.config.PropertyProvider;
 import com.byznass.tiolktrack.jaxrs.exception.mapper.*;
 import com.byznass.tiolktrack.jaxrs.filter.AuthenticationFilter;
 import com.byznass.tiolktrack.jaxrs.resource.GpsResource;
+import com.byznass.tiolktrack.jaxrs.resource.UserResource;
 import com.byznass.tiolktrack.postgres.ConnectionFactory;
 import com.byznass.tiolktrack.postgres.ConnectionProvider;
 import com.byznass.tiolktrack.postgres.LiquibaseUpdateRunner;
@@ -27,14 +28,17 @@ public class TiolkTrackApplication extends ResourceConfig {
 		registerInstances(new TiolkTrackBinder());
 
 		register(GpsResource.class);
+		register(UserResource.class);
 
 		register(AuthenticationExceptionMapper.class);
 		register(InvalidDtoExceptionMapper.class);
+		register(InvalidUserIdExceptionMapper.class);
 		register(NoGpsWIthIdExceptionMapper.class);
 		register(NoLocationForGpsExceptionMapper.class);
 		register(NoUserWithSuchIdExceptionMapper.class);
 		register(RuntimeExceptionMapper.class);
 		register(TiolkTrackExceptionMapper.class);
+		register(UserAlreadyExistExceptionMapper.class);
 
 		register(AuthenticationFilter.class);
 
