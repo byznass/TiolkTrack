@@ -2,6 +2,7 @@ package com.byznass.tiolktrack.kernel.model;
 
 import javax.validation.constraints.NotNull;
 import java.util.Arrays;
+import java.util.Objects;
 
 public class User {
 
@@ -33,5 +34,31 @@ public class User {
 	public byte[] getPassSalt() {
 
 		return Arrays.copyOf(passSalt, passSalt.length);
+	}
+
+	@Override
+	public boolean equals(Object o) {
+
+		if (this == o) {
+			return true;
+		}
+		if (!(o instanceof User)) {
+			return false;
+		}
+
+		User user = (User) o;
+
+		return id.equals(user.id) &&
+				Arrays.equals(passHash, user.passHash) &&
+				Arrays.equals(passSalt, user.passSalt);
+	}
+
+	@Override
+	public int hashCode() {
+
+		int result = Objects.hash(id);
+		result = 31 * result + Arrays.hashCode(passHash);
+		result = 31 * result + Arrays.hashCode(passSalt);
+		return result;
 	}
 }

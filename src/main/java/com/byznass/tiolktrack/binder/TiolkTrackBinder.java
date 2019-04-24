@@ -7,21 +7,21 @@ import com.byznass.tiolktrack.jaxrs.exception.mapper.*;
 import com.byznass.tiolktrack.jaxrs.filter.AuthenticationFilter;
 import com.byznass.tiolktrack.jaxrs.resource.GpsResource;
 import com.byznass.tiolktrack.jaxrs.resource.GpsResourceImpl;
+import com.byznass.tiolktrack.jaxrs.resource.UserResource;
+import com.byznass.tiolktrack.jaxrs.resource.UserResourceImpl;
 import com.byznass.tiolktrack.jaxrs.resource.dto.LocationValidator;
 import com.byznass.tiolktrack.jaxrs.resource.dto.mapper.LocationMapper;
+import com.byznass.tiolktrack.jaxrs.resource.dto.mapper.UserMapper;
+import com.byznass.tiolktrack.kernel.crypto.SaltGenerator;
 import com.byznass.tiolktrack.kernel.crypto.TokenEncrypter;
-import com.byznass.tiolktrack.kernel.dao.GpsProvider;
-import com.byznass.tiolktrack.kernel.dao.LocationPersister;
-import com.byznass.tiolktrack.kernel.dao.LocationProvider;
-import com.byznass.tiolktrack.kernel.dao.UserProvider;
+import com.byznass.tiolktrack.kernel.crypto.UserEncrypter;
+import com.byznass.tiolktrack.kernel.dao.*;
 import com.byznass.tiolktrack.kernel.handler.AuthenticationHandler;
 import com.byznass.tiolktrack.kernel.handler.GetGpsLocationHandler;
 import com.byznass.tiolktrack.kernel.handler.PersistLocationHandler;
+import com.byznass.tiolktrack.kernel.handler.PersistUserHandler;
 import com.byznass.tiolktrack.postgres.ConnectionProvider;
-import com.byznass.tiolktrack.postgres.dao.PostgresGpsProvider;
-import com.byznass.tiolktrack.postgres.dao.PostgresLocationPersister;
-import com.byznass.tiolktrack.postgres.dao.PostgresLocationProvider;
-import com.byznass.tiolktrack.postgres.dao.PostgresUserProvider;
+import com.byznass.tiolktrack.postgres.dao.*;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 
 import java.sql.Connection;
@@ -41,20 +41,27 @@ public class TiolkTrackBinder extends AbstractBinder {
 		bind(GetGpsLocationHandler.class).to(GetGpsLocationHandler.class);
 		bind(PersistLocationHandler.class).to(PersistLocationHandler.class);
 		bind(AuthenticationHandler.class).to(AuthenticationHandler.class);
+		bind(PersistUserHandler.class).to(PersistUserHandler.class);
 
 		bind(PostgresGpsProvider.class).to(GpsProvider.class);
 		bind(PostgresLocationProvider.class).to(LocationProvider.class);
 		bind(PostgresUserProvider.class).to(UserProvider.class);
 		bind(PostgresLocationPersister.class).to(LocationPersister.class);
+		bind(PostgresUserPersister.class).to(UserPersister.class);
 
 		bind(TokenEncrypter.class).to(TokenEncrypter.class);
+		bind(SaltGenerator.class).to(SaltGenerator.class);
+		bind(UserEncrypter.class).to(UserEncrypter.class);
 	}
 
 	private void bindJaxRsResources() {
 
 		bind(GpsResourceImpl.class).to(GpsResource.class);
+		bind(UserResourceImpl.class).to(UserResource.class);
 
 		bind(LocationMapper.class).to(LocationMapper.class);
+		bind(UserMapper.class).to(UserMapper.class);
+
 		bind(LocationValidator.class).to(LocationValidator.class);
 
 		bind(AuthenticationFilter.class).to(AuthenticationFilter.class);
