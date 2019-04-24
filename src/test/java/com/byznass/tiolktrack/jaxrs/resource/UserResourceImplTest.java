@@ -27,14 +27,14 @@ public class UserResourceImplTest {
 	private UserMapper userMapper;
 
 	@Before
-	public void setUp(){
+	public void setUp() {
 
 		initMocks(this);
 		userResource = new UserResourceImpl(userMapper, persistUserHandler);
 	}
 
 	@Test
-	public void givenNewUserWhenCreatingUserThenReturnCreatedStatusCode(){
+	public void givenNewUserWhenCreatingUserThenReturnCreatedStatusCode() {
 
 		User user = new User("igor", "patan");
 		UnencryptedUser unencryptedUser = new UnencryptedUser("igor", "patan");

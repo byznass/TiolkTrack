@@ -15,5 +15,4 @@ public interface UserResource {
 	@POST
 	@Produces(APPLICATION_JSON)
 	Response createUser(User user);
-
 }

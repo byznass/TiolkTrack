@@ -33,7 +33,7 @@ public class UserEncrypterTest {
 	@Test
 	public void givenExceptionThenThrowException() {
 
-		when(saltGenerator.getSalt()).thenThrow(TiolkTrackException.class);
+		when(saltGenerator.generateSalt()).thenThrow(TiolkTrackException.class);
 
 		UnencryptedUser unencryptedUser = new UnencryptedUser("igor", "patan");
 
@@ -48,7 +48,7 @@ public class UserEncrypterTest {
 	@Test
 	public void givenUnencryptedUserThenEncrypt() {
 
-		when(saltGenerator.getSalt()).thenReturn(new byte[]{3, 4});
+		when(saltGenerator.generateSalt()).thenReturn(new byte[]{3, 4});
 		when(tokenEncrypter.computeHash(eq("patan"), aryEq(new byte[]{3, 4}))).thenReturn(new byte[]{8, 9, 1});
 
 		UnencryptedUser unencryptedUser = new UnencryptedUser("igor", "patan");

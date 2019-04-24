@@ -11,7 +11,7 @@ public class SaltGenerator {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(TokenEncrypter.class);
 
-	public byte[] getSalt() throws TiolkTrackException {
+	public byte[] generateSalt() throws TiolkTrackException {
 
 		try {
 			SecureRandom secureRandom = SecureRandom.getInstance("SHA1PRNG");

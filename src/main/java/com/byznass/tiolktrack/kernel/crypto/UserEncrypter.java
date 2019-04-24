@@ -22,7 +22,7 @@ public class UserEncrypter {
 
 		try {
 
-			byte[] passSalt = saltGenerator.getSalt();
+			byte[] passSalt = saltGenerator.generateSalt();
 			byte[] passHash = tokenEncrypter.computeHash(unencryptedUser.getPassword(), passSalt);
 
 			return new User(unencryptedUser.getUserId(), passHash, passSalt);
