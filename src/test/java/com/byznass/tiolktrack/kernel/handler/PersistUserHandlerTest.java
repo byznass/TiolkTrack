@@ -56,7 +56,7 @@ public class PersistUserHandlerTest {
 
 			fail("Persister must fail.");
 		} catch (TiolkTrackException e) {
-			assertEquals("Failed to create new user.", e.getMessage());
+			assertEquals("Failed to create a new user.", e.getMessage());
 		}
 	}
 
