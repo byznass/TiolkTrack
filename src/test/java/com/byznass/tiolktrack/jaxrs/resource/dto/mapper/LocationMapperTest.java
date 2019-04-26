@@ -30,10 +30,11 @@ public class LocationMapperTest {
 	@Test
 	public void givenModelLocationWhenMappingToDotThenDoItCorrectly() {
 
-		String gpsID = "xxx";
+		String userID = "xxx";
+		String gpsName = "name";
 		LocalDateTime time = LocalDateTime.of(2019, 4, 6, 10, 15, 20, 0);
 		com.byznass.tiolktrack.kernel.model.Location modelLocation =
-				new com.byznass.tiolktrack.kernel.model.Location("123", "456", time, gpsID);
+				new com.byznass.tiolktrack.kernel.model.Location("123", "456", time, userID, gpsName);
 
 		Location actualLocation = locationMapper.toDto(modelLocation);
 
@@ -49,10 +50,11 @@ public class LocationMapperTest {
 
 		when(timeProvider.getCurrentTime()).thenReturn(time);
 
-		com.byznass.tiolktrack.kernel.model.Location actualModel = locationMapper.toModel(locationDto, "xyz");
+		com.byznass.tiolktrack.kernel.model.Location actualModel =
+				locationMapper.toModel(locationDto, "userId", "name");
 
 		com.byznass.tiolktrack.kernel.model.Location expectedModel =
-				new com.byznass.tiolktrack.kernel.model.Location("xxx", "yyy", time, "xyz");
+				new com.byznass.tiolktrack.kernel.model.Location("xxx", "yyy", time, "userId", "name");
 		assertEquals(expectedModel, actualModel);
 	}
 }

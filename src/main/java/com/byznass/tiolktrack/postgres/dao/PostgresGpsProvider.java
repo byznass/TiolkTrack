@@ -3,9 +3,10 @@ package com.byznass.tiolktrack.postgres.dao;
 import com.byznass.tiolktrack.kernel.TiolkTrackException;
 import com.byznass.tiolktrack.kernel.dao.GpsProvider;
 import com.byznass.tiolktrack.kernel.dao.LocationProvider;
-import com.byznass.tiolktrack.kernel.dao.NoGpsWithIdException;
-import com.byznass.tiolktrack.kernel.model.Gps;
+import com.byznass.tiolktrack.kernel.dao.NoSuchGpsException;
 import com.byznass.tiolktrack.kernel.model.Location;
+import com.byznass.tiolktrack.kernel.model.gps.Gps;
+import com.byznass.tiolktrack.kernel.model.gps.GpsWithLocations;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,42 +32,44 @@ public class PostgresGpsProvider implements GpsProvider {
 	}
 
 	@Override
-	public Gps getGpsById(String gpsId) throws NoGpsWithIdException, TiolkTrackException {
+	public GpsWithLocations getGpsWithLocations(String userID, String name) throws NoSuchGpsException, TiolkTrackException {
 
-		LOGGER.info("Retrieving Gps entity with id=\'{}\' from postgres database", gpsId);
-		checkIfExists(gpsId);
-		List<Location> locations = locationProvider.getLocationsForGps(gpsId);
-		LOGGER.info("Successfully retrieved Gps entity with id=\'{}\' from postgres database", gpsId);
+		LOGGER.info("Retrieving GpsWithLocations entity (\'{},{}\') from postgres database", userID, name);
+		Gps gps = getGps(userID, name);
+		List<Location> locations = locationProvider.getLocationsForGps(userID, name);
+		LOGGER.info("Successfully retrieved GpsWithLocations entity (\'{},{}\') from postgres database", userID, name);
 
-		return new Gps(gpsId, locations);
+		return new GpsWithLocations(gps, locations);
 	}
 
 	@Override
-	public boolean exists(String gpsId) throws TiolkTrackException {
+	public Gps getGps(String userID, String name) throws NoSuchGpsException, TiolkTrackException {
 
-		String query = "SELECT * FROM gps WHERE id=?";
+		LOGGER.info("Retrieving simple GPS entity (\'{},{}\') from postgres database", userID, name);
+
+		String query = "SELECT * FROM gps WHERE clientId=? AND name=?";
 		try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-			preparedStatement.setString(1, gpsId);
+			preparedStatement.setString(1, userID);
+			preparedStatement.setString(2, name);
 
-			return !isResultEmpty(preparedStatement);
+			return extractGps(userID, name, preparedStatement);
 		} catch (SQLException e) {
-			LOGGER.error("Error while checking if GPS with id = \'{}\' exists in database", gpsId, e);
-			throw new TiolkTrackException(String.format("Error while checking if GPS with id = \'%s\' exists in database", gpsId), e);
+			LOGGER.error("Error while retrieving GPS entity (\'{},{}\') from database", userID, name, e);
+			throw new TiolkTrackException(String.format("Error while retrieving GPS entity (\'%s, %s\') from database", userID, name), e);
 		}
 	}
 
-	private boolean isResultEmpty(PreparedStatement preparedStatement) throws SQLException {
+	private Gps extractGps(String userID, String name, PreparedStatement preparedStatement) throws SQLException {
 
 		try (ResultSet resultSet = preparedStatement.executeQuery()) {
-			return !resultSet.next();
+
+			if (!resultSet.next()) {
+				LOGGER.error("No GPS entity (\'{},{}\') in postgres database", userID, name);
+				throw new NoSuchGpsException(String.format("No GPS entity (\'%s, %s\') exists", userID, name));
+			}
+
+			return new Gps(userID, name);
 		}
 	}
 
-	private void checkIfExists(String gpsId) {
-
-		if (!exists(gpsId)) {
-			LOGGER.error("No Gps entity with id=\'{}\' in postgres database", gpsId);
-			throw new NoGpsWithIdException(String.format("No GPS with id=\'%s\' exists", gpsId));
-		}
-	}
 }

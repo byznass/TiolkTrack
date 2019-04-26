@@ -1,4 +1,6 @@
-package com.byznass.tiolktrack.kernel.model;
+package com.byznass.tiolktrack.kernel.model.gps;
+
+import com.byznass.tiolktrack.kernel.model.Location;
 
 import javax.inject.Singleton;
 import java.util.ArrayList;
@@ -10,22 +12,22 @@ import static java.util.Comparator.comparing;
 import static java.util.Objects.requireNonNull;
 
 @Singleton
-public class Gps {
+public class GpsWithLocations {
 
-	private final String id;
+	private final Gps gps;
 	private final List<Location> locationsInTime;
 
-	public Gps(String id, List<Location> locationsInTime) {
+	public GpsWithLocations(Gps gps, List<Location> locationsInTime) {
 
-		this.id = requireNonNull(id, "id cannot be null");
+		this.gps = requireNonNull(gps, "gps cannot be null");
 
 		this.locationsInTime = new ArrayList<>(requireNonNull(locationsInTime, "locationsInTime cannot be null"));
 		this.locationsInTime.sort(comparing(Location::getTime));
 	}
 
-	public String getId() {
+	public Gps getGps() {
 
-		return id;
+		return gps;
 	}
 
 	public Optional<Location> getLastLocation() {

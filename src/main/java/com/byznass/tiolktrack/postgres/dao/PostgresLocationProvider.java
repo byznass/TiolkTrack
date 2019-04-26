@@ -28,32 +28,35 @@ public class PostgresLocationProvider implements LocationProvider {
 	}
 
 	@Override
-	public List<Location> getLocationsForGps(String gpsId) {
+	public List<Location> getLocationsForGps(String userId, String gpsName) {
 
-		LOGGER.info("Retrieving Locations with gpsId=\'{}\' from postgres database", gpsId);
+		LOGGER.info("Retrieving Locations for gps (\'{},{}\') from postgres database", userId, gpsName);
 
-		String query = "SELECT * FROM location WHERE gpsId=?";
+		String query = "SELECT * FROM location WHERE clientId=? AND gpsName=?";
 		try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-			preparedStatement.setString(1, gpsId);
-			ResultSet resultSet = preparedStatement.executeQuery();
+			preparedStatement.setString(1, userId);
+			preparedStatement.setString(2, gpsName);
 
-			return extractLocations(resultSet);
+			return extractLocations(preparedStatement);
 		} catch (SQLException e) {
-			LOGGER.error("Error while retrieving Locations with gpsId=\'{}\' from postgres database", gpsId, e);
-			throw new TiolkTrackException(String.format("Cannot retrieve Locations for gps with id =  \'%s\' from database", gpsId), e);
+			LOGGER.error("Error while retrieving Locations with gps (\'{},{}\') from postgres database", userId, gpsName, e);
+			throw new TiolkTrackException(String.format("Cannot retrieve Locations for gps (\'%s,%s\') from database", userId, gpsName), e);
 		}
 	}
 
-	private List<Location> extractLocations(ResultSet resultSet) throws SQLException {
+	private List<Location> extractLocations(PreparedStatement preparedStatement) throws SQLException {
 
-		List<Location> locations = new ArrayList<>();
+		try (ResultSet resultSet = preparedStatement.executeQuery()) {
 
-		while (resultSet.next()) {
-			Location location = getLocation(resultSet);
-			locations.add(location);
+			List<Location> locations = new ArrayList<>();
+
+			while (resultSet.next()) {
+				Location location = getLocation(resultSet);
+				locations.add(location);
+			}
+
+			return locations;
 		}
-
-		return locations;
 	}
 
 	private Location getLocation(ResultSet resultSet) throws SQLException {
@@ -61,8 +64,9 @@ public class PostgresLocationProvider implements LocationProvider {
 		String latitude = resultSet.getString("latitude");
 		String longitude = resultSet.getString("longitude");
 		LocalDateTime time = resultSet.getTimestamp("time").toLocalDateTime();
-		String gpsIdOfCurrentLocation = resultSet.getString("gpsId");
+		String userId = resultSet.getString("clientId");
+		String gpsName = resultSet.getString("gpsName");
 
-		return new Location(latitude, longitude, time, gpsIdOfCurrentLocation);
+		return new Location(latitude, longitude, time, userId, gpsName);
 	}
 }

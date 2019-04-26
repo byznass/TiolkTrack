@@ -43,32 +43,34 @@ public class GpsResourceImplTest {
 	public void whenGettingCurrentLocationOfGpsThenReturnCorrectResponse() {
 
 		// setup
-		String gpsId = "xyz";
+		String userId = "xyz";
+		String gpsName = "123";
 		LocalDateTime time = LocalDateTime.of(2019, 3, 24, 22, 56, 23, 11);
-		Location modelLocation = new Location("47.151154", "27.589897", time, gpsId);
+		Location modelLocation = new Location("47.151154", "27.589897", time, userId, gpsName);
 		com.byznass.tiolktrack.jaxrs.resource.dto.Location expectedLocation =
 				new com.byznass.tiolktrack.jaxrs.resource.dto.Location("47.151154", "27.589897", time.toString());
 
-		when(getGpsLocationHandler.getLastLocation(gpsId)).thenReturn(modelLocation);
+		when(getGpsLocationHandler.getLastLocation(userId, gpsName)).thenReturn(modelLocation);
 		when(locationMapper.toDto(modelLocation)).thenReturn(expectedLocation);
 
 		// execute
-		com.byznass.tiolktrack.jaxrs.resource.dto.Location actualLocation = gpsResource.getLocationById(gpsId);
+		com.byznass.tiolktrack.jaxrs.resource.dto.Location actualLocation = gpsResource.getLocation(userId, gpsName);
 
 		// verify
 		assertEquals(expectedLocation, actualLocation);
-		verify(getGpsLocationHandler).getLastLocation(gpsId);
+		verify(getGpsLocationHandler).getLastLocation(userId, gpsName);
 		verify(locationMapper).toDto(modelLocation);
 	}
 
 	@Test(expected = RuntimeException.class)
 	public void givenAnExceptionIsThrownWhenGettingCurrentLocationThenRethrow() {
 
-		String gpsId = "123";
+		String userId = "xyz";
+		String gpsName = "123";
 
-		when(getGpsLocationHandler.getLastLocation(gpsId)).thenThrow(new RuntimeException());
+		when(getGpsLocationHandler.getLastLocation(userId, gpsName)).thenThrow(new RuntimeException());
 
-		gpsResource.getLocationById(gpsId);
+		gpsResource.getLocation(userId, gpsName);
 	}
 
 	@Test(expected = TiolkTrackException.class)
@@ -78,12 +80,12 @@ public class GpsResourceImplTest {
 
 		com.byznass.tiolktrack.jaxrs.resource.dto.Location location =
 				new com.byznass.tiolktrack.jaxrs.resource.dto.Location("111", "222", time.toString());
-		Location modelLocation = new Location("111", "222", time, "xxx");
+		Location modelLocation = new Location("111", "222", time, "xxx", "123");
 
-		when(locationMapper.toModel(location, "xxx")).thenReturn(modelLocation);
+		when(locationMapper.toModel(location, "xxx", "123")).thenReturn(modelLocation);
 		when(persistLocationHandler.persist(modelLocation)).thenThrow(TiolkTrackException.class);
 
-		gpsResource.createLocationForGps("xxx", location);
+		gpsResource.createLocationForGps("xxx", "123", location);
 	}
 
 	@Test
@@ -93,17 +95,18 @@ public class GpsResourceImplTest {
 
 		com.byznass.tiolktrack.jaxrs.resource.dto.Location location =
 				new com.byznass.tiolktrack.jaxrs.resource.dto.Location("111", "222", time.toString());
-		Location modelLocation = new Location("111", "222", time, "xxx");
-		Location resultModel = new Location("111_1", "222_2", time.plusDays(1), "xxx");
+		Location modelLocation = new Location("111", "222", time, "xxx", "123");
+		Location resultModel = new Location("111_1", "222_2", time.plusDays(1), "xxx", "123");
 
 		com.byznass.tiolktrack.jaxrs.resource.dto.Location expected =
 				new com.byznass.tiolktrack.jaxrs.resource.dto.Location("111_1", "222_2", time.plusDays(1).toString());
 
-		when(locationMapper.toModel(location, "xxx")).thenReturn(modelLocation);
+		when(locationMapper.toModel(location, "xxx", "123")).thenReturn(modelLocation);
 		when(persistLocationHandler.persist(modelLocation)).thenReturn(resultModel);
 		when(locationMapper.toDto(resultModel)).thenReturn(expected);
 
-		com.byznass.tiolktrack.jaxrs.resource.dto.Location actual = gpsResource.createLocationForGps("xxx", location);
+		com.byznass.tiolktrack.jaxrs.resource.dto.Location actual =
+				gpsResource.createLocationForGps("xxx", "123", location);
 
 		assertEquals(expected, actual);
 	}
@@ -116,6 +119,6 @@ public class GpsResourceImplTest {
 
 		doThrow(InvalidDtoException.class).when(locationValidator).validate(location);
 
-		gpsResource.createLocationForGps("xxx", location);
+		gpsResource.createLocationForGps("xxx", "123", location);
 	}
 }

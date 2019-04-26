@@ -1,9 +1,9 @@
 package com.byznass.tiolktrack.kernel.handler;
 
 import com.byznass.tiolktrack.kernel.dao.GpsProvider;
-import com.byznass.tiolktrack.kernel.dao.NoGpsWithIdException;
-import com.byznass.tiolktrack.kernel.model.Gps;
+import com.byznass.tiolktrack.kernel.dao.NoSuchGpsException;
 import com.byznass.tiolktrack.kernel.model.Location;
+import com.byznass.tiolktrack.kernel.model.gps.GpsWithLocations;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -34,20 +34,21 @@ public class GetGpsLocationHandlerTest {
 	public void givenCorrectGpsIdWhenGettingLocationForGpsWithLocationsThenReturnLastOne() {
 
 		// setup
-		String gpsId = "id";
-		Gps gps = mock(Gps.class);
+		String userId = "id";
+		String gpsName = "name";
+		GpsWithLocations gpsWithLocations = mock(GpsWithLocations.class);
 
 		LocalDateTime time = LocalDateTime.of(2019, 3, 24, 23, 8, 10, 0);
-		Location expectedLocation = new Location("456", "123", time, gpsId);
+		Location expectedLocation = new Location("456", "123", time, userId, gpsName);
 
-		when(gpsProvider.getGpsById(gpsId)).thenReturn(gps);
-		when(gps.getLastLocation()).thenReturn(Optional.of(expectedLocation));
+		when(gpsProvider.getGpsWithLocations(userId, gpsName)).thenReturn(gpsWithLocations);
+		when(gpsWithLocations.getLastLocation()).thenReturn(Optional.of(expectedLocation));
 
 		// execute
-		Location actualLocation = handler.getLastLocation(gpsId);
+		Location actualLocation = handler.getLastLocation(userId, gpsName);
 
 		// verify
-		verify(gpsProvider).getGpsById(gpsId);
+		verify(gpsProvider).getGpsWithLocations(userId, gpsName);
 		assertEquals(expectedLocation, actualLocation);
 	}
 
@@ -55,23 +56,24 @@ public class GetGpsLocationHandlerTest {
 	public void givenCorrectGpsIdWhenGettingLocationForGpsWithoutLocationsThenThrowException() {
 
 		// setup
-		String gpsId = "id";
-		Gps gps = mock(Gps.class);
+		String userId = "id";
+		String gpsName = "name";
+		GpsWithLocations gpsWithLocations = mock(GpsWithLocations.class);
 
-		when(gpsProvider.getGpsById(gpsId)).thenReturn(gps);
-		when(gps.getLastLocation()).thenReturn(Optional.empty());
+		when(gpsProvider.getGpsWithLocations(userId, gpsName)).thenReturn(gpsWithLocations);
+		when(gpsWithLocations.getLastLocation()).thenReturn(Optional.empty());
 
 		// execute
-		handler.getLastLocation(gpsId);
+		handler.getLastLocation(userId, gpsName);
 	}
 
-	@Test(expected = NoGpsWithIdException.class)
+	@Test(expected = NoSuchGpsException.class)
 	public void givenNonexistentGpsIdWhenGettingLocationThenThrowException() {
 
 		// setup
-		when(gpsProvider.getGpsById("123")).thenThrow(new NoGpsWithIdException("No GPS with given id."));
+		when(gpsProvider.getGpsWithLocations("loh", "123")).thenThrow(new NoSuchGpsException("No GPS with given id."));
 
 		// execute
-		handler.getLastLocation("123");
+		handler.getLastLocation("loh", "123");
 	}
 }
