@@ -1,5 +1,6 @@
 package com.byznass.tiolktrack.jaxrs.resource;
 
+import com.byznass.tiolktrack.jaxrs.resource.dto.GpsDto;
 import com.byznass.tiolktrack.jaxrs.resource.dto.Location;
 
 import javax.ws.rs.*;
@@ -18,4 +19,8 @@ public interface GpsResource {
 	@Produces(APPLICATION_JSON)
 	@Path("{gpsName}/location")
 	Location createLocationForGps(@PathParam("userId") String userId, @PathParam("gpsName") String gpsName, Location locationDto);
+
+	@POST
+	@Produces(APPLICATION_JSON)
+	GpsDto createGps(@PathParam("userId") String userId, GpsDto gps);
 }

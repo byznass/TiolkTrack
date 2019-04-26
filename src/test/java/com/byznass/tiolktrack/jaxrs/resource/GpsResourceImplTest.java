@@ -1,12 +1,16 @@
 package com.byznass.tiolktrack.jaxrs.resource;
 
+import com.byznass.tiolktrack.jaxrs.resource.dto.GpsDto;
 import com.byznass.tiolktrack.jaxrs.resource.dto.InvalidDtoException;
 import com.byznass.tiolktrack.jaxrs.resource.dto.LocationValidator;
+import com.byznass.tiolktrack.jaxrs.resource.dto.mapper.GpsMapper;
 import com.byznass.tiolktrack.jaxrs.resource.dto.mapper.LocationMapper;
 import com.byznass.tiolktrack.kernel.TiolkTrackException;
 import com.byznass.tiolktrack.kernel.handler.GetGpsLocationHandler;
+import com.byznass.tiolktrack.kernel.handler.PersistGpsHandler;
 import com.byznass.tiolktrack.kernel.handler.PersistLocationHandler;
 import com.byznass.tiolktrack.kernel.model.Location;
+import com.byznass.tiolktrack.kernel.model.gps.Gps;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
@@ -27,6 +31,10 @@ public class GpsResourceImplTest {
 	private PersistLocationHandler persistLocationHandler;
 	@Mock
 	private LocationValidator locationValidator;
+	@Mock
+	private GpsMapper gpsMapper;
+	@Mock
+	private PersistGpsHandler persistGpsHandler;
 
 	private GpsResourceImpl gpsResource;
 
@@ -36,7 +44,7 @@ public class GpsResourceImplTest {
 		initMocks(this);
 
 		gpsResource =
-				new GpsResourceImpl(getGpsLocationHandler, persistLocationHandler, locationMapper, locationValidator);
+				new GpsResourceImpl(getGpsLocationHandler, persistLocationHandler, locationMapper, locationValidator, gpsMapper, persistGpsHandler);
 	}
 
 	@Test
@@ -121,4 +129,39 @@ public class GpsResourceImplTest {
 
 		gpsResource.createLocationForGps("xxx", "123", location);
 	}
+
+	@Test
+	public void givenANewGpsWhenPersistingThenSucceed() {
+
+		String userId = "user";
+		GpsDto gpsDto = new GpsDto("name");
+
+		Gps gps = new Gps(userId, "name");
+		when(gpsMapper.toModel(gpsDto, userId)).thenReturn(gps);
+
+		Gps gps1 = new Gps(userId, "name");
+		when(persistGpsHandler.persistGps(gps)).thenReturn(gps1);
+
+		when(gpsMapper.toDto(gps1)).thenReturn(new GpsDto("name"));
+
+		GpsDto actualGps = gpsResource.createGps(userId, gpsDto);
+		GpsDto expectedGps = new GpsDto("name");
+
+		assertEquals(expectedGps, actualGps);
+	}
+
+	@Test(expected = TiolkTrackException.class)
+	public void givenExceptionWhilePersistingNewGpsThenRethrow() {
+
+		String userId = "user";
+		GpsDto gpsDto = new GpsDto("name");
+
+		Gps gps = new Gps(userId, "name");
+		when(gpsMapper.toModel(gpsDto, userId)).thenReturn(gps);
+
+		when(persistGpsHandler.persistGps(gps)).thenThrow(TiolkTrackException.class);
+
+		gpsResource.createGps(userId, gpsDto);
+	}
+
 }
