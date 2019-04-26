@@ -10,7 +10,7 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON_TYPE;
 import static javax.ws.rs.core.Response.Status.NOT_FOUND;
 
 @Provider
-public class NoGpsWIthIdExceptionMapper implements ExceptionMapper<NoSuchGpsException> {
+public class NoSuchGpsExceptionMapper implements ExceptionMapper<NoSuchGpsException> {
 
 	private static final String RESPONSE = "{\n\t\"error\": \"%s\"\n}";
 

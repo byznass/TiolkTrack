@@ -25,7 +25,7 @@ public class PostgresLocationPersister implements LocationPersister {
 	}
 
 	@Override
-	public void persistLocation(Location location) {
+	public void persistLocation(Location location) throws TiolkTrackException {
 
 		LOGGER.info("Persisting location for GPS entity (\'{},{}\') into postgres database", location.getUserId(), location.getGpsName());
 
@@ -41,7 +41,7 @@ public class PostgresLocationPersister implements LocationPersister {
 
 			if (affectedRows != 1) {
 				LOGGER.error("Error while persisting location, affected row not equal to 1 but {}", affectedRows);
-				throw new TiolkTrackException(String.format("Persisting error on INSERT into database for GPS entity (\'%s, %s\')", location.getUserId(), location.getGpsName()));
+				throw new TiolkTrackException(String.format("Cannot persist location for GPS entity (\'%s, %s\')", location.getUserId(), location.getGpsName()));
 			}
 
 			LOGGER.info("Successfully persisted location into database.");

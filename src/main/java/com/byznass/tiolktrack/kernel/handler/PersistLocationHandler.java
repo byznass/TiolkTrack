@@ -1,5 +1,6 @@
 package com.byznass.tiolktrack.kernel.handler;
 
+import com.byznass.tiolktrack.kernel.TiolkTrackException;
 import com.byznass.tiolktrack.kernel.dao.GpsProvider;
 import com.byznass.tiolktrack.kernel.dao.LocationPersister;
 import com.byznass.tiolktrack.kernel.model.Location;
@@ -25,6 +26,7 @@ public class PersistLocationHandler {
 	public Location persist(Location location) {
 
 		//TODO(TT-31) add validation of latitude and longitude
+
 		LOGGER.info("Persisting location for GPS entity (\'{},{}\')", location.getUserId(), location.getGpsName());
 		checkIfGpsExists(location.getUserId(), location.getGpsName());
 		locationPersister.persistLocation(location);
@@ -35,6 +37,11 @@ public class PersistLocationHandler {
 
 	private void checkIfGpsExists(String userId, String gpsName) {
 
-		gpsProvider.getGps(userId, gpsName);
+		try {
+			gpsProvider.getGps(userId, gpsName);
+		} catch (TiolkTrackException e) {
+			LOGGER.error("Failed to check that location is for a valid GPS");
+			throw new TiolkTrackException("Failed to check that location is for a valid GPS", e);
+		}
 	}
 }

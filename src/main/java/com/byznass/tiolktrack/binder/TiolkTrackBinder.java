@@ -67,7 +67,7 @@ public class TiolkTrackBinder extends AbstractBinder {
 		bind(AuthenticationFilter.class).to(AuthenticationFilter.class);
 
 		bind(AuthenticationExceptionMapper.class).to(AuthenticationExceptionMapper.class);
-		bind(NoGpsWIthIdExceptionMapper.class).to(NoGpsWIthIdExceptionMapper.class);
+		bind(NoSuchGpsExceptionMapper.class).to(NoSuchGpsExceptionMapper.class);
 		bind(NoLocationForGpsExceptionMapper.class).to(NoLocationForGpsExceptionMapper.class);
 		bind(NoUserWithSuchIdExceptionMapper.class).to(NoUserWithSuchIdExceptionMapper.class);
 		bind(RuntimeExceptionMapper.class).to(RuntimeExceptionMapper.class);

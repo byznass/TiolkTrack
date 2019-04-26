@@ -30,31 +30,33 @@ public class PostgresLocationProvider implements LocationProvider {
 	@Override
 	public List<Location> getLocationsForGps(String userId, String gpsName) {
 
-		LOGGER.info("Retrieving Locations for gps \'{},{}\' from postgres database", userId, gpsName);
+		LOGGER.info("Retrieving Locations for gps (\'{},{}\') from postgres database", userId, gpsName);
 
 		String query = "SELECT * FROM location WHERE clientId=? AND gpsName=?";
 		try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
 			preparedStatement.setString(1, userId);
 			preparedStatement.setString(2, gpsName);
-			ResultSet resultSet = preparedStatement.executeQuery();
 
-			return extractLocations(resultSet);
+			return extractLocations(preparedStatement);
 		} catch (SQLException e) {
-			LOGGER.error("Error while retrieving Locations with gps \'{},{}\' from postgres database", userId, gpsName, e);
-			throw new TiolkTrackException(String.format("Cannot retrieve Locations for gps \'%s,%s\' from database", userId, gpsName), e);
+			LOGGER.error("Error while retrieving Locations with gps (\'{},{}\') from postgres database", userId, gpsName, e);
+			throw new TiolkTrackException(String.format("Cannot retrieve Locations for gps (\'%s,%s\') from database", userId, gpsName), e);
 		}
 	}
 
-	private List<Location> extractLocations(ResultSet resultSet) throws SQLException {
+	private List<Location> extractLocations(PreparedStatement preparedStatement) throws SQLException {
 
-		List<Location> locations = new ArrayList<>();
+		try (ResultSet resultSet = preparedStatement.executeQuery()) {
 
-		while (resultSet.next()) {
-			Location location = getLocation(resultSet);
-			locations.add(location);
+			List<Location> locations = new ArrayList<>();
+
+			while (resultSet.next()) {
+				Location location = getLocation(resultSet);
+				locations.add(location);
+			}
+
+			return locations;
 		}
-
-		return locations;
 	}
 
 	private Location getLocation(ResultSet resultSet) throws SQLException {
