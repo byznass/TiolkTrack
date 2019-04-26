@@ -25,11 +25,11 @@ public class LocationMapper {
 		return new Location(modelLocation.getLatitude(), modelLocation.getLongitude(), modelLocation.getTime().toString());
 	}
 
-	public com.byznass.tiolktrack.kernel.model.Location toModel(Location location, String gpsId) {
+	public com.byznass.tiolktrack.kernel.model.Location toModel(Location location, String userId, String gpsName) {
 
 		LocalDateTime time = timeProvider.getCurrentTime();
 		LOGGER.info("Mapping location from dto to model using time = '{}'", time);
 
-		return new com.byznass.tiolktrack.kernel.model.Location(location.getLatitude(), location.getLongitude(), time, gpsId);
+		return new com.byznass.tiolktrack.kernel.model.Location(location.getLatitude(), location.getLongitude(), time, userId, gpsName);
 	}
 }

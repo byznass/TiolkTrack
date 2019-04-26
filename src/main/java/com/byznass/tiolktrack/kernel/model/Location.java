@@ -12,18 +12,20 @@ public class Location {
 	private final String latitude;
 	private final String longitude;
 	private final LocalDateTime time;
-	private final String gpsId;
+	private final String userId;
+	private final String gpsName;
 
-	public Location(String latitude, String longitude, LocalDateTime time, String gpsId) {
+	public Location(String latitude, String longitude, LocalDateTime time, String userId, String gpsName) {
 
-		if (latitude == null || longitude == null || time == null || gpsId == null) {
+		if (latitude == null || longitude == null || time == null || userId == null || gpsName == null) {
 			throw new IllegalArgumentException(ALL_PARAMETERS_MUST_BE_NON_NULL);
 		}
 
 		this.latitude = latitude;
 		this.longitude = longitude;
 		this.time = time;
-		this.gpsId = gpsId;
+		this.userId = userId;
+		this.gpsName = gpsName;
 	}
 
 	public String getLongitude() {
@@ -41,9 +43,14 @@ public class Location {
 		return time;
 	}
 
-	public String getGpsId() {
+	public String getUserId() {
 
-		return gpsId;
+		return userId;
+	}
+
+	public String getGpsName() {
+
+		return gpsName;
 	}
 
 	@Override
@@ -62,12 +69,13 @@ public class Location {
 		return latitude.equals(location.latitude) &&
 				longitude.equals(location.longitude) &&
 				time.equals(location.time) &&
-				gpsId.equals(location.gpsId);
+				userId.equals(location.userId) &&
+				gpsName.equals(location.gpsName);
 	}
 
 	@Override
 	public int hashCode() {
 
-		return Objects.hash(latitude, longitude, time, gpsId);
+		return Objects.hash(latitude, longitude, time, userId, gpsName);
 	}
 }

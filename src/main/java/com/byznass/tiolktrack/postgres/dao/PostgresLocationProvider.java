@@ -28,19 +28,20 @@ public class PostgresLocationProvider implements LocationProvider {
 	}
 
 	@Override
-	public List<Location> getLocationsForGps(String gpsId) {
+	public List<Location> getLocationsForGps(String userId, String gpsName) {
 
-		LOGGER.info("Retrieving Locations with gpsId=\'{}\' from postgres database", gpsId);
+		LOGGER.info("Retrieving Locations for gps \'{},{}\' from postgres database", userId, gpsName);
 
-		String query = "SELECT * FROM location WHERE gpsId=?";
+		String query = "SELECT * FROM location WHERE clientId=? AND gpsName=?";
 		try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
-			preparedStatement.setString(1, gpsId);
+			preparedStatement.setString(1, userId);
+			preparedStatement.setString(2, gpsName);
 			ResultSet resultSet = preparedStatement.executeQuery();
 
 			return extractLocations(resultSet);
 		} catch (SQLException e) {
-			LOGGER.error("Error while retrieving Locations with gpsId=\'{}\' from postgres database", gpsId, e);
-			throw new TiolkTrackException(String.format("Cannot retrieve Locations for gps with id =  \'%s\' from database", gpsId), e);
+			LOGGER.error("Error while retrieving Locations with gps \'{},{}\' from postgres database", userId, gpsName, e);
+			throw new TiolkTrackException(String.format("Cannot retrieve Locations for gps \'%s,%s\' from database", userId, gpsName), e);
 		}
 	}
 
@@ -61,8 +62,9 @@ public class PostgresLocationProvider implements LocationProvider {
 		String latitude = resultSet.getString("latitude");
 		String longitude = resultSet.getString("longitude");
 		LocalDateTime time = resultSet.getTimestamp("time").toLocalDateTime();
-		String gpsIdOfCurrentLocation = resultSet.getString("gpsId");
+		String userId = resultSet.getString("clientId");
+		String gpsName = resultSet.getString("gpsName");
 
-		return new Location(latitude, longitude, time, gpsIdOfCurrentLocation);
+		return new Location(latitude, longitude, time, userId, gpsName);
 	}
 }

@@ -6,16 +6,16 @@ import javax.ws.rs.*;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
-@Path("/gps")
+@Path("/{userId}/gps")
 public interface GpsResource {
 
 	@GET
 	@Produces(APPLICATION_JSON)
-	@Path("{gpsId}/location")
-	Location getLocationById(@PathParam("gpsId") String gpsId);
+	@Path("{gpsName}/location")
+	Location getLocation(@PathParam("userId") String userId, @PathParam("gpsName") String gpsName);
 
 	@POST
 	@Produces(APPLICATION_JSON)
-	@Path("{gpsId}/location")
-	Location createLocationForGps(@PathParam("gpsId") String gpsId, Location location);
+	@Path("{gpsName}/location")
+	Location createLocationForGps(@PathParam("userId") String userId, @PathParam("gpsName") String gpsName, Location locationDto);
 }

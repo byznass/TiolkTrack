@@ -2,18 +2,21 @@ package com.byznass.tiolktrack.kernel.handler;
 
 public class NoLocationForGpsException extends RuntimeException {
 
-	private static final String ERROR_MESSAGE = "GPS with id=\'%s\' has no location";
+	private static final String ERROR_MESSAGE = "GPS entity (\'%s, %s\') has no location";
 
-	private final String gpsId;
+	private final String userId;
+	private final String gpsName;
 
-	public NoLocationForGpsException(String gpsId) {
+	public NoLocationForGpsException(String userId, String gpsName) {
 
-		this.gpsId = gpsId;
+		this.userId = userId;
+
+		this.gpsName = gpsName;
 	}
 
 	@Override
 	public String getMessage() {
 
-		return String.format(ERROR_MESSAGE, gpsId);
+		return String.format(ERROR_MESSAGE, userId, gpsName);
 	}
 }

@@ -27,27 +27,28 @@ public class PostgresLocationPersister implements LocationPersister {
 	@Override
 	public void persistLocation(Location location) {
 
-		LOGGER.info("Persisting location with gpsId=\'{}\' into postgres database", location.getGpsId());
+		LOGGER.info("Persisting location for GPS entity (\'{},{}\') into postgres database", location.getUserId(), location.getGpsName());
 
-		String query = "INSERT INTO location (latitude, longitude, time, gpsId) VALUES(?, ?, ?, ?);";
+		String query = "INSERT INTO location (latitude, longitude, time, clientId, gpsName) VALUES(?, ?, ?, ?, ?);";
 		try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
 			preparedStatement.setString(1, location.getLatitude());
 			preparedStatement.setString(2, location.getLongitude());
 			preparedStatement.setTimestamp(3, Timestamp.valueOf(location.getTime()));
-			preparedStatement.setString(4, location.getGpsId());
+			preparedStatement.setString(4, location.getUserId());
+			preparedStatement.setString(5, location.getGpsName());
 
 			int affectedRows = preparedStatement.executeUpdate();
 
 			if (affectedRows != 1) {
 				LOGGER.error("Error while persisting location, affected row not equal to 1 but {}", affectedRows);
-				throw new TiolkTrackException(String.format("Persisting error on INSERT into database for gpsId %s", location.getGpsId()));
+				throw new TiolkTrackException(String.format("Persisting error on INSERT into database for GPS entity (\'%s, %s\')", location.getUserId(), location.getGpsName()));
 			}
 
 			LOGGER.info("Successfully persisted location into database.");
 
 		} catch (SQLException e) {
-			LOGGER.error("Error while persisting location with gpsId=\'{}\' into postgres database", location.getGpsId(), e);
-			throw new TiolkTrackException(String.format("Cannot persist location for gps with id =  \'%s\' into database", location.getGpsId()), e);
+			LOGGER.error("Error while persisting location for GPS entity (\'{},{}\') into postgres database", location.getUserId(), location.getGpsName(), e);
+			throw new TiolkTrackException(String.format("Cannot persist location for GPS entity (\'%s, %s\') into database", location.getUserId(), location.getGpsName()), e);
 		}
 	}
 }

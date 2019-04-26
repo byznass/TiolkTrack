@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface LocationProvider {
 
-	List<Location> getLocationsForGps(String gpsId) throws TiolkTrackException;
+	List<Location> getLocationsForGps(String userId, String gpsName) throws TiolkTrackException;
 }

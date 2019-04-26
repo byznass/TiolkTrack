@@ -29,25 +29,25 @@ public class GpsResourceImpl implements GpsResource {
 	}
 
 	@Override
-	public Location getLocationById(String gpsId) {
+	public Location getLocation(String userId, String gpsName) {
 
-		LOGGER.info("Request for last location for GPS with id=\'{}\'", gpsId);
-		com.byznass.tiolktrack.kernel.model.Location location = getGpsLocationHandler.getLastLocation(gpsId);
-		LOGGER.info("Returning last location of GPS with id=\'{}\'", gpsId);
+		LOGGER.info("Request for last location for GPS entity (\'{}, {}\')", userId, gpsName);
+		com.byznass.tiolktrack.kernel.model.Location location = getGpsLocationHandler.getLastLocation(userId, gpsName);
+		LOGGER.info("Returning last location of GPS entity (\'{}, {}\')", userId, gpsName);
 
 		return locationMapper.toDto(location);
 	}
 
 	@Override
-	public Location createLocationForGps(String gpsId, Location locationDto) {
+	public Location createLocationForGps(String userId, String gpsName, Location locationDto) {
 
-		LOGGER.info("Request for creating a location for GPS with id=\'{}\'", gpsId);
+		LOGGER.info("Request for creating a location for GPS entity (\'{}, {}\')", userId, gpsName);
 
 		locationValidator.validate(locationDto);
-		com.byznass.tiolktrack.kernel.model.Location locationModel = locationMapper.toModel(locationDto, gpsId);
+		com.byznass.tiolktrack.kernel.model.Location locationModel = locationMapper.toModel(locationDto, userId, gpsName);
 		com.byznass.tiolktrack.kernel.model.Location result = persistLocationHandler.persist(locationModel);
 
-		LOGGER.info("Created a location for GPS with id=\'{}\'", gpsId);
+		LOGGER.info("Created a location for GPS entity (\'{}, {}\')", userId, gpsName);
 
 		return locationMapper.toDto(result);
 	}

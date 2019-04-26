@@ -70,4 +70,40 @@
         </sql>
     </changeSet>
 
+    <changeSet id="0.1.7" author="byznass">
+        <sql>
+            DROP TABLE gps CASCADE;
+        </sql>
+    </changeSet>
+
+    <changeSet id="0.1.8" author="byznass">
+        <sql>
+            CREATE TABLE gps(
+                id uuid DEFAULT uuid_generate_v1() PRIMARY KEY,
+                clientId VARCHAR(50) NOT NULL,
+                name VARCHAR(50) NOT NULL,
+                UNIQUE (clientId, name),
+                FOREIGN KEY (clientId) REFERENCES client(id) ON DELETE CASCADE ON UPDATE CASCADE
+            );
+        </sql>
+    </changeSet>
+
+    <changeSet id="0.1.9" author="byznass">
+        <sql>
+            ALTER TABLE location RENAME COLUMN gpsId TO gpsName;
+        </sql>
+    </changeSet>
+
+    <changeSet id="0.1.10" author="byznass">
+        <sql>
+            ALTER TABLE location ADD clientId VARCHAR(50) NOT NULL;
+        </sql>
+    </changeSet>
+
+    <changeSet id="0.1.11" author="byznass">
+        <sql>
+            ALTER TABLE location ADD CONSTRAINT location_gps_fkey FOREIGN KEY (clientId, gpsName) REFERENCES gps(clientId, name);
+        </sql>
+    </changeSet>
+
 </databaseChangeLog>

@@ -1,8 +1,8 @@
 package com.byznass.tiolktrack.kernel.handler;
 
 import com.byznass.tiolktrack.kernel.dao.GpsProvider;
-import com.byznass.tiolktrack.kernel.model.Gps;
 import com.byznass.tiolktrack.kernel.model.Location;
+import com.byznass.tiolktrack.kernel.model.gps.GpsWithLocations;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,18 +21,18 @@ public class GetGpsLocationHandler {
 		this.gpsProvider = gpsProvider;
 	}
 
-	public Location getLastLocation(String gpsId) {
+	public Location getLastLocation(String userId, String gpsName) {
 
-		LOGGER.info("Trying to get current location of GPS with id=\'{}\'", gpsId);
-		Gps gps = gpsProvider.getGpsById(gpsId);
+		LOGGER.info("Trying to get last location of GPS entity (\'{},{}\')", userId, gpsName);
+		GpsWithLocations gpsWithLocations = gpsProvider.getGpsWithLocations(userId, gpsName);
 
-		Optional<Location> location = gps.getLastLocation();
+		Optional<Location> location = gpsWithLocations.getLastLocation();
 		if (!location.isPresent()) {
-			LOGGER.error("GPS with id=\'{}\' has no location", gpsId);
-			throw new NoLocationForGpsException(gpsId);
+			LOGGER.error("GPS entity (\'{},{}\') has no location", userId, gpsName);
+			throw new NoLocationForGpsException(userId, gpsName);
 		}
 
-		LOGGER.info("Successfully retrieved last location for GPS with id=\'{}\'", gpsId);
+		LOGGER.info("Successfully retrieved last location for GPS entity (\'{},{}\')", userId, gpsName);
 
 		return location.get();
 	}
