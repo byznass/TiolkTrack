@@ -35,6 +35,8 @@ public class PersistGpsHandlerTest {
 
 		Gps gps = new Gps("user", "12345@!@#$das");
 
+		when(userProvider.exists(gps.getUserId())).thenReturn(true);
+
 		persistGpsHander.persistGps(gps);
 	}
 
@@ -42,6 +44,7 @@ public class PersistGpsHandlerTest {
 	public void givenTooLongGpsNameThenThrowException() {
 
 		Gps gps = new Gps("user", "1adsadkjasbkdjbaskdbkasbkdbuasbdbasdg83eg238egybdas");
+		when(userProvider.exists(gps.getUserId())).thenReturn(true);
 
 		persistGpsHander.persistGps(gps);
 	}
@@ -49,7 +52,7 @@ public class PersistGpsHandlerTest {
 	@Test(expected = NoUserWithSuchIdException.class)
 	public void givenNonExistentUserThenThrowException() {
 
-		Gps gps = new Gps("user", "1adsadkjasbkdjbaskdbkasbkdbuasbdbasdg83eg238egybda");
+		Gps gps = new Gps("user", "1adsadkjasbkdjbaskdbkasbkdbuasbdbasdg83eg238egybda++");
 
 		when(userProvider.exists(gps.getUserId())).thenReturn(false);
 
