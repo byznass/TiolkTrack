@@ -41,7 +41,6 @@ public class TiolkTrackApplication extends ResourceConfig {
 		register(TiolkTrackExceptionMapper.class);
 		register(UserAlreadyExistExceptionMapper.class);
 
-
 		register(AuthenticationFilter.class);
 
 		LOGGER.info("Finished application initialization");
