@@ -41,14 +41,14 @@ public class PersistGpsHandler {
 
 		LOGGER.info("Validating new GPS before persisting.");
 
-		if (!IdentifierValidator.validate(gps.getName())) {
-			LOGGER.error("Failed validation of new GPS. Invalid GPS name \'{}\'", gps.getName());
-			throw new InvalidIdentifierException(String.format("Invalid GPS name. It can only contain maximum number of %s %s.", MAX_LENGTH, CHAR_SET));
-		}
-
 		if (!userProvider.exists(gps.getUserId())) {
 			LOGGER.error("Failed validation of new GPS. Non-existent GPS userId \'{}\'", gps.getUserId());
 			throw new NoUserWithSuchIdException(gps.getUserId());
+		}
+
+		if (!IdentifierValidator.validate(gps.getName())) {
+			LOGGER.error("Failed validation of new GPS. Invalid GPS name \'{}\'", gps.getName());
+			throw new InvalidIdentifierException(String.format("Invalid GPS name. It can only contain maximum number of %s %s.", MAX_LENGTH, CHAR_SET));
 		}
 
 		LOGGER.info("Validation of new GPS succeeded.");

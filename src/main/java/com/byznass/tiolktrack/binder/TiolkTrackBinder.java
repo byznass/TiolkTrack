@@ -10,6 +10,7 @@ import com.byznass.tiolktrack.jaxrs.resource.GpsResourceImpl;
 import com.byznass.tiolktrack.jaxrs.resource.UserResource;
 import com.byznass.tiolktrack.jaxrs.resource.UserResourceImpl;
 import com.byznass.tiolktrack.jaxrs.resource.dto.LocationValidator;
+import com.byznass.tiolktrack.jaxrs.resource.dto.mapper.GpsMapper;
 import com.byznass.tiolktrack.jaxrs.resource.dto.mapper.LocationMapper;
 import com.byznass.tiolktrack.jaxrs.resource.dto.mapper.UserMapper;
 import com.byznass.tiolktrack.kernel.crypto.SaltGenerator;
@@ -60,6 +61,7 @@ public class TiolkTrackBinder extends AbstractBinder {
 
 		bind(LocationMapper.class).to(LocationMapper.class);
 		bind(UserMapper.class).to(UserMapper.class);
+		bind(GpsMapper.class).to(GpsMapper.class);
 
 		bind(LocationValidator.class).to(LocationValidator.class);
 
