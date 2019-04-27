@@ -10,6 +10,7 @@ import javax.ws.rs.Priorities;
 import javax.ws.rs.container.ContainerRequestContext;
 import javax.ws.rs.container.ContainerRequestFilter;
 import javax.ws.rs.ext.Provider;
+import java.util.Base64;
 
 import static com.byznass.tiolktrack.jaxrs.filter.AuthenticationException.Reason.INVALID_AUTHENTICATION_METHOD;
 import static com.byznass.tiolktrack.jaxrs.filter.AuthenticationException.Reason.INVALID_FORMAT;
@@ -21,10 +22,8 @@ public class AuthenticationFilter implements ContainerRequestFilter {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(AuthenticationFilter.class);
 
-	private static final String AUTHENTICATION_SCHEME = "bearer ";
-	private static final String ALL_LEADING_SPACES = "^ *";
-	private static final String EMPTY = "";
-	private static final String SPACE = " ";
+	private static final String AUTHENTICATION_SCHEME = "basic ";
+	private static final String COLON = ":";
 
 	private final AuthenticationHandler authenticationHandler;
 
@@ -61,23 +60,23 @@ public class AuthenticationFilter implements ContainerRequestFilter {
 
 	private void validateUserToken(String userIdWithToken) throws AuthenticationException {
 
-		userIdWithToken = userIdWithToken.replaceFirst(ALL_LEADING_SPACES, EMPTY);
-		String[] splitUserIdWithToken = userIdWithToken.split(SPACE, -1);
+		try {
+			Base64.Decoder decoder = Base64.getDecoder();
+			String decodedPair = new String(decoder.decode(userIdWithToken));
 
-		if (!userIdWithToken.contains(" ") || splitUserIdWithToken.length < 2) {
-			LOGGER.error("Failed authentication: invalid format");
+			String[] credentials = decodedPair.split(COLON, -1);
+
+			if (credentials.length < 2) {
+				LOGGER.error("Failed authentication: invalid format");
+				throw new AuthenticationException(INVALID_FORMAT);
+			}
+
+			String userId = credentials[0];
+			authenticationHandler.authenticate(userId, decodedPair.substring(userId.length() + 1));
+			LOGGER.info("Finished authentication: success");
+		} catch (IllegalArgumentException e) {
+			LOGGER.error("Failed authentication: invalid Base64 string");
 			throw new AuthenticationException(INVALID_FORMAT);
 		}
-
-		String userId = splitUserIdWithToken[0];
-		String token = userIdWithToken.substring(userId.length() + 1);
-
-		if (userId.isEmpty() || token.isEmpty()) {
-			LOGGER.error("Failed authentication: invalid format");
-			throw new AuthenticationException(INVALID_FORMAT);
-		}
-
-		authenticationHandler.authenticate(userId, token);
-		LOGGER.info("Finished authentication: success");
 	}
 }
