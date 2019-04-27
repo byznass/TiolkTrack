@@ -64,7 +64,7 @@ public class PersistUserHandlerTest {
 	@Test
 	public void givenNewUserThenPersist() {
 
-		UnencryptedUser unencryptedUser = new UnencryptedUser("igor", "patan");
+		UnencryptedUser unencryptedUser = new UnencryptedUser("1adsadkjasbkdjbaskdbkasbkdbuasbdbasdg83eg238egybda", "patan");
 		User user = new User("igor", new byte[0], new byte[0]);
 
 		when(userEncrypter.encrypt(unencryptedUser)).thenReturn(user);
@@ -72,5 +72,22 @@ public class PersistUserHandlerTest {
 		persistUserHandler.persistUser(unencryptedUser);
 
 		verify(userPersister).persist(user);
+	}
+
+	@Test(expected = InvalidIdentifierException.class)
+	public void givenInvalidUserIdThenThrowException() {
+
+		UnencryptedUser unencryptedUser = new UnencryptedUser("12345@!@#$das", "12345@!@#$das");
+
+		persistUserHandler.persistUser(unencryptedUser);
+	}
+
+	@Test(expected = InvalidIdentifierException.class)
+	public void givenTooLongUserIdThenThrowException() {
+
+		UnencryptedUser unencryptedUser =
+				new UnencryptedUser("1adsadkjasbkdjbaskdbkasbkdbuasbdbasdg83eg238egybdas", "12345@!@#$das");
+
+		persistUserHandler.persistUser(unencryptedUser);
 	}
 }

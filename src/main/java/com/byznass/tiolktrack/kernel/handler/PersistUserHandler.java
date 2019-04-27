@@ -6,10 +6,14 @@ import com.byznass.tiolktrack.kernel.dao.UserPersister;
 import com.byznass.tiolktrack.kernel.dao.UserProvider;
 import com.byznass.tiolktrack.kernel.model.UnencryptedUser;
 import com.byznass.tiolktrack.kernel.model.User;
+import com.byznass.tiolktrack.kernel.util.IdentifierValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+
+import static com.byznass.tiolktrack.kernel.util.IdentifierValidator.CHAR_SET;
+import static com.byznass.tiolktrack.kernel.util.IdentifierValidator.MAX_LENGTH;
 
 public class PersistUserHandler {
 
@@ -45,9 +49,9 @@ public class PersistUserHandler {
 
 		LOGGER.info("Validating the user to be created.");
 
-		if (unencryptedUser.getUserId().contains(" ")) {
-			LOGGER.error("Validation failed: userId contains spaces");
-			throw new InvalidUserIdException("User ID cannot contain spaces");
+		if (!IdentifierValidator.validate(unencryptedUser.getUserId())) {
+			LOGGER.error("Failed validation of new User. Invalid user \'{}\'", unencryptedUser.getUserId());
+			throw new InvalidIdentifierException(String.format("Invalid User ID. It can only contain maximum number of %s %s.", MAX_LENGTH, CHAR_SET));
 		}
 
 		if (userProvider.exists(unencryptedUser.getUserId())) {
