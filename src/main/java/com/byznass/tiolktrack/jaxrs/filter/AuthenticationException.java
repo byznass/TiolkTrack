@@ -4,9 +4,9 @@ public class AuthenticationException extends RuntimeException {
 
 	public enum Reason {
 
-		INVALID_AUTHENTICATION_METHOD("Provided authentication method is invalid. Only Bearer auth method is accepted"),
-		INVALID_FORMAT("Provided format for token is invalid. Correct format: 'Bearer <userId> <token>'"),
-		INVALID_TOKEN("Provided <userId token> pair is invalid");
+		INVALID_AUTHENTICATION_METHOD("Provided authentication method is invalid. Only Basic auth method is accepted"),
+		INVALID_FORMAT("Provided format is invalid. Correct format: 'Basic Base64(<userId>:<password>)'"),
+		INVALID_TOKEN("Provided <userId password> pair is invalid");
 
 		private String message;
 

@@ -7,12 +7,14 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 
 import javax.ws.rs.container.ContainerRequestContext;
+import java.util.Base64;
 
 import static com.byznass.tiolktrack.jaxrs.filter.AuthenticationException.Reason.INVALID_AUTHENTICATION_METHOD;
 import static com.byznass.tiolktrack.jaxrs.filter.AuthenticationException.Reason.INVALID_FORMAT;
 import static javax.ws.rs.core.HttpHeaders.AUTHORIZATION;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.mockito.MockitoAnnotations.initMocks;
@@ -62,7 +64,7 @@ public class AuthenticationFilterTest {
 	}
 
 	@Test
-	public void givenNoBearerPrefixInAuthorizationHeaderThenThrowException() {
+	public void givenNoBasicPrefixInAuthorizationHeaderThenThrowException() {
 
 		ContainerRequestContext request = Mockito.mock(ContainerRequestContext.class);
 		when(request.getHeaderString(AUTHORIZATION)).thenReturn("sdecfg,l");
@@ -77,10 +79,10 @@ public class AuthenticationFilterTest {
 	}
 
 	@Test
-	public void givenNoSpaceAfterBearerPrefixInAuthorizationHeaderThenThrowException() {
+	public void givenNoSpaceAfterBasicPrefixInAuthorizationHeaderThenThrowException() {
 
 		ContainerRequestContext request = Mockito.mock(ContainerRequestContext.class);
-		when(request.getHeaderString(AUTHORIZATION)).thenReturn("Bearer_49695_oaie");
+		when(request.getHeaderString(AUTHORIZATION)).thenReturn("Basic_49695_oaie");
 
 		try {
 			filter.filter(request);
@@ -92,10 +94,13 @@ public class AuthenticationFilterTest {
 	}
 
 	@Test
-	public void givenNoSpaceBetweenIdAndTokenInAuthorizationHeaderThenThrowException() {
+	public void givenNoColonBetweenUserIdAndPasswordInAuthorizationHeaderThenThrowException() {
+
+		Base64.Encoder encoder = Base64.getEncoder();
+		String invalidPair = encoder.encodeToString("userId password".getBytes());
 
 		ContainerRequestContext request = Mockito.mock(ContainerRequestContext.class);
-		when(request.getHeaderString(AUTHORIZATION)).thenReturn("Bearer _49695_oaie");
+		when(request.getHeaderString(AUTHORIZATION)).thenReturn("Basic " + invalidPair);
 
 		try {
 			filter.filter(request);
@@ -107,53 +112,61 @@ public class AuthenticationFilterTest {
 	}
 
 	@Test
-	public void givenEmptyIdAndTokenButASpaceInAuthorizationHeaderThenThrowException() {
+	public void givenEmptyUserIdAndPasswordButAColonInAuthorizationHeaderThenCallHandlerWithEmptyString() {
+
+		Base64.Encoder encoder = Base64.getEncoder();
+		String encodedPair = encoder.encodeToString(":".getBytes());
 
 		ContainerRequestContext request = Mockito.mock(ContainerRequestContext.class);
-		when(request.getHeaderString(AUTHORIZATION)).thenReturn("Bearer   ");
-
-		try {
-			filter.filter(request);
-			fail("Authentication must fail when AUTHORIZATION header is empty.");
-		} catch (AuthenticationException e) {
-			assertEquals(INVALID_FORMAT, e.getReason());
-		}
-
-	}
-
-	@Test
-	public void givenEmptyTokenInAuthorizationHeaderThenThrowException() {
-
-		ContainerRequestContext request = Mockito.mock(ContainerRequestContext.class);
-		when(request.getHeaderString(AUTHORIZATION)).thenReturn("Bearer userId ");
-
-		try {
-			filter.filter(request);
-			fail("Authentication must fail when AUTHORIZATION header is empty.");
-		} catch (AuthenticationException e) {
-			assertEquals(INVALID_FORMAT, e.getReason());
-		}
-	}
-
-	@Test
-	public void givenTokenFromSpacesOnlyInAuthorizationHeaderThenSucceed() {
-
-		ContainerRequestContext request = Mockito.mock(ContainerRequestContext.class);
-		when(request.getHeaderString(AUTHORIZATION)).thenReturn("Bearer   userId  ");
+		when(request.getHeaderString(AUTHORIZATION)).thenReturn("Basic " + encodedPair);
 
 		filter.filter(request);
 
-		verify(authenticationHandler).authenticate("userId", " ");
+		verify(authenticationHandler).authenticate(eq(""), eq(""));
 	}
 
 	@Test
-	public void givenCorrectFormatThenSucceed() {
+	public void givenEmptyPasswordInAuthorizationHeaderThenCallHandlerWithEmptyPassword() {
+
+		Base64.Encoder encoder = Base64.getEncoder();
+		String encodedPair = encoder.encodeToString("userId:".getBytes());
 
 		ContainerRequestContext request = Mockito.mock(ContainerRequestContext.class);
-		when(request.getHeaderString(AUTHORIZATION)).thenReturn("Bearer     userId   tok en ");
+		when(request.getHeaderString(AUTHORIZATION)).thenReturn("Basic " + encodedPair);
 
 		filter.filter(request);
 
-		verify(authenticationHandler).authenticate("userId", "  tok en ");
+		verify(authenticationHandler).authenticate(eq("userId"), eq(""));
+	}
+
+	@Test
+	public void givenPasswordFromColonsOnlyInAuthorizationHeaderThenSucceed() {
+
+		Base64.Encoder encoder = Base64.getEncoder();
+		String encodedPair = encoder.encodeToString(" userId  :::  ".getBytes());
+
+		ContainerRequestContext request = Mockito.mock(ContainerRequestContext.class);
+		when(request.getHeaderString(AUTHORIZATION)).thenReturn("Basic " + encodedPair);
+
+		filter.filter(request);
+
+		verify(authenticationHandler).authenticate(" userId  ", "::  ");
+	}
+
+	@Test
+	public void givenInvalidBase64InAuthorizationHeaderThenThrowException() {
+
+		Base64.Encoder encoder = Base64.getEncoder();
+		String invalidPair = encoder.encodeToString("userId:password".getBytes());
+
+		ContainerRequestContext request = Mockito.mock(ContainerRequestContext.class);
+		when(request.getHeaderString(AUTHORIZATION)).thenReturn("Basic  " + invalidPair);
+
+		try {
+			filter.filter(request);
+			fail("Authentication must fail when AUTHORIZATION header is empty.");
+		} catch (AuthenticationException e) {
+			assertEquals(INVALID_FORMAT, e.getReason());
+		}
 	}
 }
