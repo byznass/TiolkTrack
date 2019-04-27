@@ -26,7 +26,9 @@ public class GpsResourceImpl implements GpsResource {
 	private final PersistGpsHandler persistGpsHandler;
 
 	@Inject
-	GpsResourceImpl(GetGpsLocationHandler getGpsLocationHandler, PersistLocationHandler persistLocationHandler, LocationMapper locationMapper, LocationValidator locationValidator, GpsMapper gpsMapper, PersistGpsHandler persistGpsHandler) {
+	GpsResourceImpl(GetGpsLocationHandler getGpsLocationHandler, PersistLocationHandler persistLocationHandler,
+					LocationMapper locationMapper, LocationValidator locationValidator, GpsMapper gpsMapper,
+					PersistGpsHandler persistGpsHandler) {
 
 		this.getGpsLocationHandler = getGpsLocationHandler;
 		this.persistLocationHandler = persistLocationHandler;
@@ -64,8 +66,11 @@ public class GpsResourceImpl implements GpsResource {
 	@Override
 	public GpsDto createGps(String userId, GpsDto gpsDto) {
 
+		LOGGER.info("Request for creating a GPS entity (\'{}, {}\')", userId, gpsDto.getGpsName());
 		Gps gps = gpsMapper.toModel(gpsDto, userId);
+		Gps persistedGps = persistGpsHandler.persistGps(gps);
+		LOGGER.info("Created a GPS entity (\'{}, {}\')", persistedGps.getUserId(), persistedGps.getName());
 
-		return gpsMapper.toDto(persistGpsHandler.persistGps(gps));
+		return gpsMapper.toDto(persistedGps);
 	}
 }

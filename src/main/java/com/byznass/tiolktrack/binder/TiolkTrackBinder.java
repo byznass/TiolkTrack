@@ -16,10 +16,7 @@ import com.byznass.tiolktrack.kernel.crypto.SaltGenerator;
 import com.byznass.tiolktrack.kernel.crypto.TokenEncrypter;
 import com.byznass.tiolktrack.kernel.crypto.UserEncrypter;
 import com.byznass.tiolktrack.kernel.dao.*;
-import com.byznass.tiolktrack.kernel.handler.AuthenticationHandler;
-import com.byznass.tiolktrack.kernel.handler.GetGpsLocationHandler;
-import com.byznass.tiolktrack.kernel.handler.PersistLocationHandler;
-import com.byznass.tiolktrack.kernel.handler.PersistUserHandler;
+import com.byznass.tiolktrack.kernel.handler.*;
 import com.byznass.tiolktrack.postgres.ConnectionProvider;
 import com.byznass.tiolktrack.postgres.dao.*;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
@@ -42,12 +39,14 @@ public class TiolkTrackBinder extends AbstractBinder {
 		bind(PersistLocationHandler.class).to(PersistLocationHandler.class);
 		bind(AuthenticationHandler.class).to(AuthenticationHandler.class);
 		bind(PersistUserHandler.class).to(PersistUserHandler.class);
+		bind(PersistGpsHandler.class).to(PersistGpsHandler.class);
 
 		bind(PostgresGpsProvider.class).to(GpsProvider.class);
 		bind(PostgresLocationProvider.class).to(LocationProvider.class);
 		bind(PostgresUserProvider.class).to(UserProvider.class);
 		bind(PostgresLocationPersister.class).to(LocationPersister.class);
 		bind(PostgresUserPersister.class).to(UserPersister.class);
+		bind(PostgresGpsPersister.class).to(GpsPersister.class);
 
 		bind(TokenEncrypter.class).to(TokenEncrypter.class);
 		bind(SaltGenerator.class).to(SaltGenerator.class);
@@ -68,6 +67,7 @@ public class TiolkTrackBinder extends AbstractBinder {
 
 		bind(AuthenticationExceptionMapper.class).to(AuthenticationExceptionMapper.class);
 		bind(NoSuchGpsExceptionMapper.class).to(NoSuchGpsExceptionMapper.class);
+		bind(InvalidIdentifierExceptionMapper.class).to(InvalidIdentifierExceptionMapper.class);
 		bind(NoLocationForGpsExceptionMapper.class).to(NoLocationForGpsExceptionMapper.class);
 		bind(NoUserWithSuchIdExceptionMapper.class).to(NoUserWithSuchIdExceptionMapper.class);
 		bind(RuntimeExceptionMapper.class).to(RuntimeExceptionMapper.class);
