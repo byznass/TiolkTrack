@@ -17,11 +17,11 @@ public class IntegrationConnectionFactory implements ConnectionProvider {
 	private static final String DB_USERNAME = "tiolktrack";
 	private static final String DB_PASSWORD = "dbIntegrationTest";
 
-	private static final int RETRY_LIMIT = 10;
+	private static final int RETRY_LIMIT = 1024;
 
 	public Connection getConnection() throws ConnectionFailureException {
 
-		int currentRetry = 0;
+		int currentRetry = 1;
 		while (true) {
 			try {
 				Thread.sleep(currentRetry * 2000);
@@ -29,7 +29,7 @@ public class IntegrationConnectionFactory implements ConnectionProvider {
 				return tryToGetConnection();
 			} catch (ClassNotFoundException | SQLException | NoSuchPropertyException | InterruptedException e) {
 				LOGGER.error("Cannot connect to database on attempt {}", currentRetry);
-				currentRetry++;
+				currentRetry *= 2;
 				if (currentRetry == RETRY_LIMIT) {
 					throw new ConnectionFailureException("Cannot obtain database connection", e);
 				}
