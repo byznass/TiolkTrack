@@ -24,12 +24,12 @@ public class IntegrationConnectionFactory implements ConnectionProvider {
 		int currentRetry = 1;
 		while (true) {
 			try {
-				Thread.sleep(currentRetry * 2000);
+				Thread.sleep(2000);
 
 				return tryToGetConnection();
 			} catch (ClassNotFoundException | SQLException | NoSuchPropertyException | InterruptedException e) {
 				LOGGER.error("Cannot connect to database on attempt {}", currentRetry);
-				currentRetry *= 2;
+				currentRetry++;
 				if (currentRetry == RETRY_LIMIT) {
 					throw new ConnectionFailureException("Cannot obtain database connection", e);
 				}
