@@ -17,7 +17,7 @@ public class IntegrationConnectionFactory implements ConnectionProvider {
 	private static final String DB_USERNAME = "tiolktrack";
 	private static final String DB_PASSWORD = "dbIntegrationTest";
 
-	private static final int RETRY_LIMIT = 5;
+	private static final int RETRY_LIMIT = 10;
 
 	public Connection getConnection() throws ConnectionFailureException {
 
