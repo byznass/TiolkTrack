@@ -74,6 +74,6 @@ check.dependsOn dbIntegrationTest
 idea {
     module {
         testSourceDirs += file(dbIntegrationTestSourceDir)
-        resourceDirs += sourceSets.dbIntegrationTest.output.resourcesDir
+        testResourceDirs += sourceSets.dbIntegrationTest.output.resourcesDir
     }
 }

@@ -7,7 +7,7 @@ node{
     try{
 
         stage('Test') {
-            sh './gradlew cleanTest test jacocoMerge'
+            sh './gradlew cleanTest test'
         }
 
         stage('Database Integration Tests') {
