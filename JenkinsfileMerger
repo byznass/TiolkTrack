@@ -6,8 +6,12 @@ node{
 
     try{
 
-        stage('Test'){
+        stage('Test') {
             sh './gradlew cleanTest test jacocoMerge'
+        }
+
+        stage('Database Integration Tests') {
+            sh './gradlew dbIntegrationTest'
         }
 
         stage('SonarQube analysis') {
@@ -86,7 +90,7 @@ node{
             }
         }
     } finally{
-        junit '**/build/test-results/**/*.xml'
+//        junit '**/build/test-results/**/*.xml'
         jacoco execPattern: '**/coverageForAllTests.exec'
     }
 }

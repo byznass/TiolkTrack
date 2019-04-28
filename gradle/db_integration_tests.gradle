@@ -2,7 +2,8 @@
  * Contains tasks that run database integration tests.
  */
 
-def dbIntegrationTestSourceDir = 'src/dbIntegrationTest/java'
+def dbIntegrationTestSourceDir = "$projectDir/src/dbIntegrationTest/java"
+def dbIntegrationTestResourceDir = "$projectDir/src/dbIntegrationTest/resources"
 
 sourceSets {
     dbIntegrationTest {
@@ -10,6 +11,10 @@ sourceSets {
             compileClasspath += main.output + test.output
             runtimeClasspath += main.output + test.output
             srcDir file(dbIntegrationTestSourceDir)
+        }
+
+        resources {
+            srcDirs dbIntegrationTestResourceDir
         }
     }
 }
@@ -27,7 +32,7 @@ task dbIntegrationTest(type: Test) {
     group = LifecycleBasePlugin.VERIFICATION_GROUP
     description = "Runs all database integration tests"
 
-    dependsOn 'startPostgresInstance'
+    dependsOn 'startPostgresInstance', 'copyDbIntegrationTestResources'
     finalizedBy 'stopPostgresInstance'
 
     testClassesDirs = sourceSets.dbIntegrationTest.output.classesDirs
@@ -44,6 +49,7 @@ task dbIntegrationTest(type: Test) {
 task dbIntegrationTestInteractive(type: Exec) {
 
     commandLine 'docker', 'run', '--rm', '--name', 'dbIntegrationTestPostgresContainer', '-e', 'POSTGRESS_PASSWORD=dbIntegrationTest', '-e', 'POSTGRES_USER=tiolktrack', '-p', '5432:5432', 'postgres'
+    dependsOn 'copyDbIntegrationTestResources'
 }
 
 task startPostgresInstance(type: Exec) {
@@ -55,10 +61,19 @@ task stopPostgresInstance(type: Exec) {
     commandLine 'docker', 'stop', 'dbIntegrationTestPostgresContainer'
 }
 
+task copyDbIntegrationTestResources(type: Copy) {
+
+    from("$projectDir/db") {
+        include 'liquibase/'
+    }
+    into sourceSets.dbIntegrationTest.output.resourcesDir
+}
+
 check.dependsOn dbIntegrationTest
 
 idea {
     module {
         testSourceDirs += file(dbIntegrationTestSourceDir)
+        resourceDirs += sourceSets.dbIntegrationTest.output.resourcesDir
     }
 }

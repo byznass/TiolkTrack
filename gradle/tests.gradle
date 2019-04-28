@@ -30,3 +30,5 @@ task jacocoMerge(dependsOn: ['jacocoMergeTest']) {
 
     // used to run the other merge tasks
 }
+
+tasks.sonarqube.dependsOn jacocoMerge
