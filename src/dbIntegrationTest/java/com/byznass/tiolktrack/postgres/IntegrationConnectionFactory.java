@@ -13,7 +13,7 @@ public class IntegrationConnectionFactory implements ConnectionProvider {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(IntegrationConnectionFactory.class);
 
-	private static final String URL = "jdbc:postgresql://localhost/tiolktrack";
+	private static final String URL = "jdbc:postgresql://dbIntegrationTestPostgresContainer/tiolktrack";
 	private static final String DB_USERNAME = "tiolktrack";
 	private static final String DB_PASSWORD = "dbIntegrationTest";
 

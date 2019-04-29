@@ -5,30 +5,30 @@
 def fileWithCoverageForAllTests = "$buildDir/jacoco/coverageForAllTests.exec"
 
 jacoco {
-    toolVersion = "0.8.3"
-    reportsDir = file(fileWithCoverageForAllTests)
+	toolVersion = "0.8.3"
+	reportsDir = file(fileWithCoverageForAllTests)
 }
 
 sonarqube {
-    properties {
-        property "sonar.jacoco.reportPath", fileWithCoverageForAllTests
-    }
+	properties {
+		property "sonar.jacoco.reportPath", fileWithCoverageForAllTests
+	}
 }
 
-jacocoTestReport{
-    executionData = project.fileTree(dir: '.', include:'**/build/jacoco/*.exec')
-    classDirectories = project.fileTree(dir: '.', include:'**/build/classes/main/**/*', excludes: [])
-    sourceDirectories = project.fileTree(dir: '.', include:'**/src/main/java/**/*')
+jacocoTestReport {
+	executionData = project.fileTree(dir: '.', include: '**/build/jacoco/*.exec')
+	classDirectories = project.fileTree(dir: '.', include: '**/build/classes/main/**/*', excludes: [])
+	sourceDirectories = project.fileTree(dir: '.', include: '**/src/main/java/**/*')
 }
 
 task jacocoMergeTest(type: JacocoMerge) {
-    destinationFile = file(fileWithCoverageForAllTests)
-    executionData = project.fileTree(dir: '.', include:'**/build/jacoco/test.exec')
+	destinationFile = file(fileWithCoverageForAllTests)
+	executionData = project.fileTree(dir: '.', include: '**/build/jacoco/test.exec')
 }
 
 task jacocoMerge(dependsOn: ['jacocoMergeTest']) {
 
-    // used to run the other merge tasks
+	// used to run the other merge tasks
 }
 
 tasks.sonarqube.dependsOn jacocoMerge

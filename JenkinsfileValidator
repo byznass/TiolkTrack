@@ -1,10 +1,10 @@
 #!/usr/bin/env groovy
 
-node{
+node {
 
 	final scmVars = checkout(scm)
 
-	try{
+	try {
 
 		stage('Test') {
 			sh './gradlew cleanTest test'
@@ -40,7 +40,7 @@ node{
 
 		stage('Send result to GitHub') {
 			withCredentials([string(credentialsId: 'byznass-dev-github-repo_hook', variable: 'TOKEN')]) {
-				env.HASH="${scmVars.GIT_COMMIT}"
+				env.HASH = "${scmVars.GIT_COMMIT}"
 				sh '''
                     curl "https://api.github.com/repos/byznass/TiolkTrack-Server/statuses/${HASH}?access_token=$TOKEN" \
                         -H "Content-Type: application/json" \
@@ -49,7 +49,7 @@ node{
                 '''
 			}
 		}
-	} finally{
+	} finally {
 //		junit '**/build/test-results/**/*.xml'
 		jacoco execPattern: '**/coverageForAllTests.exec'
 	}

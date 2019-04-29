@@ -6,22 +6,22 @@ def dbIntegrationTestSourceDir = "$projectDir/src/dbIntegrationTest/java"
 def dbIntegrationTestResourceDir = "$projectDir/src/dbIntegrationTest/resources"
 
 sourceSets {
-    dbIntegrationTest {
-        java {
-            compileClasspath += main.output + test.output
-            runtimeClasspath += main.output + test.output
-            srcDir file(dbIntegrationTestSourceDir)
-        }
+	dbIntegrationTest {
+		java {
+			compileClasspath += main.output + test.output
+			runtimeClasspath += main.output + test.output
+			srcDir file(dbIntegrationTestSourceDir)
+		}
 
-        resources {
-            srcDirs dbIntegrationTestResourceDir
-        }
-    }
+		resources {
+			srcDirs dbIntegrationTestResourceDir
+		}
+	}
 }
 
 configurations {
-    dbIntegrationTestCompile.extendsFrom testCompile
-    dbIntegrationTestRuntime.extendsFrom testRuntime
+	dbIntegrationTestCompile.extendsFrom testCompile
+	dbIntegrationTestRuntime.extendsFrom testRuntime
 }
 
 /**
@@ -29,18 +29,17 @@ configurations {
  */
 task dbIntegrationTest(type: Test) {
 
-    group = LifecycleBasePlugin.VERIFICATION_GROUP
-    description = "Runs all database integration tests"
+	group = LifecycleBasePlugin.VERIFICATION_GROUP
+	description = "Runs all database integration tests"
 
-    dependsOn 'startPostgresInstance', 'copyDbIntegrationTestResources'
-    finalizedBy 'stopPostgresInstance'
+	dependsOn 'copyDbIntegrationTestResources'
 
-    testClassesDirs = sourceSets.dbIntegrationTest.output.classesDirs
-    classpath = sourceSets.dbIntegrationTest.runtimeClasspath
+	testClassesDirs = sourceSets.dbIntegrationTest.output.classesDirs
+	classpath = sourceSets.dbIntegrationTest.runtimeClasspath
 
-    outputs.upToDateWhen { false }
+	outputs.upToDateWhen { false }
 
-    mustRunAfter test
+	mustRunAfter test
 }
 
 /**
@@ -48,32 +47,51 @@ task dbIntegrationTest(type: Test) {
  */
 task dbIntegrationTestInteractive(type: Exec) {
 
-    commandLine 'docker', 'run', '--rm', '--name', 'dbIntegrationTestPostgresContainer', '-e', 'POSTGRESS_PASSWORD=dbIntegrationTest', '-e', 'POSTGRES_USER=tiolktrack', '-p', '5432:5432', 'postgres'
-    dependsOn 'copyDbIntegrationTestResources'
+	commandLine 'docker', 'run', '--rm', '--name', 'dbIntegrationTestPostgresContainer', '-e', 'POSTGRESS_PASSWORD=dbIntegrationTest', '-e', 'POSTGRES_USER=tiolktrack', '-p', '5432:5432', 'postgres'
+	dependsOn 'copyDbIntegrationTestResources'
 }
 
-task startPostgresInstance(type: Exec) {
+task runAllDbIntegrationTests(type: Exec) {
 
-    commandLine 'docker', 'run', '--rm', '--name', 'dbIntegrationTestPostgresContainer', '-e', 'POSTGRESS_PASSWORD=dbIntegrationTest', '-e', 'POSTGRES_USER=tiolktrack', '-p', '5432:5432', '-d', 'postgres'
+	finalizedBy 'cleanAfterDbIntegrationTestsRun'
+
+	doFirst {
+		exec {
+			commandLine 'docker', 'network', 'create', 'dbIntegrationTestNetwork'
+		}
+		exec {
+			commandLine 'docker', 'run', '--rm', '--name', 'dbIntegrationTestPostgresContainer', '-e', 'POSTGRESS_PASSWORD=dbIntegrationTest', '-e', 'POSTGRES_USER=tiolktrack', '-p', '5432:5432', '-d', '--network', 'dbIntegrationTestNetwork', 'postgres'
+		}
+	}
+	commandLine 'bash', '-c', 'docker run -u $(cat /etc/passwd | grep $USER | cut -d\':\' -f3):$(cat /etc/passwd | grep $USER | cut -d\':\' -f4) -w $(pwd) -v $(pwd):$(pwd) --name  tiolktrack_integrationTestRunnerContainer --rm --network dbIntegrationTestNetwork openjdk:8 ./gradlew --gradle-user-home /tmp --project-cache-dir /tmp dbIntegrationTest'
 }
 
-task stopPostgresInstance(type: Exec) {
-    commandLine 'docker', 'stop', 'dbIntegrationTestPostgresContainer'
+task cleanAfterDbIntegrationTestsRun(type: Exec) {
+
+	doFirst {
+		exec {
+			commandLine 'bash', '-c', 'if [[ $(docker container ls -f "name=dbIntegrationTestPostgresContainer" -q | grep . -q; echo $?) -eq 0 ]] ; then docker stop dbIntegrationTestPostgresContainer ; fi'
+		}
+		exec {
+			commandLine 'bash', '-c', 'if [[ $(docker container ls -f "name=tiolktrack_integrationTestRunnerContainer" -q | grep . -q; echo $?) -eq 0 ]] ; then docker stop tiolktrack_integrationTestRunnerContainer ; fi'
+		}
+	}
+	commandLine 'bash', '-c', 'if [[ $(docker network ls -f "name=dbIntegrationTestNetwork" -q | grep . -q; echo $?) -eq 0 ]] ; then docker network rm dbIntegrationTestNetwork ; fi'
 }
 
 task copyDbIntegrationTestResources(type: Copy) {
 
-    from("$projectDir/db") {
-        include 'liquibase/'
-    }
-    into sourceSets.dbIntegrationTest.output.resourcesDir
+	from("$projectDir/db") {
+		include 'liquibase/'
+	}
+	into sourceSets.dbIntegrationTest.output.resourcesDir
+}
+
+idea {
+	module {
+		testSourceDirs += file(dbIntegrationTestSourceDir)
+		testResourceDirs += sourceSets.dbIntegrationTest.output.resourcesDir
+	}
 }
 
 check.dependsOn dbIntegrationTest
-
-idea {
-    module {
-        testSourceDirs += file(dbIntegrationTestSourceDir)
-        testResourceDirs += sourceSets.dbIntegrationTest.output.resourcesDir
-    }
-}
