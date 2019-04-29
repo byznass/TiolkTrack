@@ -11,7 +11,7 @@ node {
 		}
 
 		stage('Database Integration Tests') {
-			sh './gradlew runAllDbIntegrationTests'
+			sh './gradlew --debug runAllDbIntegrationTests'
 		}
 
 		stage('SonarQube analysis') {
