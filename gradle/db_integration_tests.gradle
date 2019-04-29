@@ -69,7 +69,7 @@ task runAllDbIntegrationTests(type: Exec) {
 			commandLine 'bash', '-c', 'ls -la'
 		}
 	}
-	commandLine 'bash', '-c', 'docker run -u $(cat /etc/passwd | grep $USER | cut -d\':\' -f3):$(cat /etc/passwd | grep $USER | cut -d\':\' -f4) -w /tiolktrack -v $(pwd):/tiolktrack --name  tiolktrack_integrationTestRunnerContainer --network dbIntegrationTestNetwork debian ping 8.8.8.8'
+	commandLine 'bash', '-c', 'docker run -u $(cat /etc/passwd | grep $USER | cut -d\':\' -f3):$(cat /etc/passwd | grep $USER | cut -d\':\' -f4) -w /tiolktrack -v /:/tiolktrack --name  tiolktrack_integrationTestRunnerContainer --network dbIntegrationTestNetwork debian ping 8.8.8.8'
 }
 
 task cleanAfterDbIntegrationTestsRun(type: Exec) {
