@@ -42,7 +42,7 @@ public class PostgresUserProviderIntegrationTest extends DatabaseIntegrationTest
 		try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
 			preparedStatement.setString(1, user.getId());
 			preparedStatement.setBytes(2, user.getPassHash());
-			preparedStatement.setBytes(3, user.getPassHash());
+			preparedStatement.setBytes(3, user.getPassSalt());
 
 			int numberOfAffectedRows = preparedStatement.executeUpdate();
 
