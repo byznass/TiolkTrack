@@ -65,9 +65,9 @@ task runAllDbIntegrationTests(type: Exec) {
 		exec {
 			commandLine 'bash', '-c', 'echo "------PULA------> <"$USER">"'
 		}
-//		exec {
-//			commandLine 'bash', '-c', 'cat /etc/passwd | grep $USER'
-//		}
+		exec {
+			commandLine 'bash', '-c', 'cat /etc/passwd | grep $USER'
+		}
 		exec {
 			commandLine 'bash', '-c', 'cat /etc/passwd'
 		}
