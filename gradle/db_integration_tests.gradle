@@ -65,14 +65,14 @@ task runAllDbIntegrationTests(type: Exec) {
 		exec {
 			commandLine 'bash', '-c', 'echo "----------------->" $USER'
 		}
-		exec {
-			commandLine 'bash', '-c', 'cat /etc/passwd | grep $USER'
-		}
+//		exec {
+//			commandLine 'bash', '-c', 'cat /etc/passwd | grep $USER'
+//		}
 		exec {
 			commandLine 'bash', '-c', 'cat /etc/passwd'
 		}
 	}
-	commandLine 'bash', '-c', 'docker run -u $(cat /etc/passwd | grep $USER | cut -d\':\' -f3):$(cat /etc/passwd | grep $USER | cut -d\':\' -f4) -w $(pwd) -v $(pwd):$(pwd) --name  tiolktrack_integrationTestRunnerContainer --rm --network dbIntegrationTestNetwork openjdk:8 ./gradlew --debug --gradle-user-home /tmp --project-cache-dir /tmp dbIntegrationTest'
+	//commandLine 'bash', '-c', 'docker run -u $(cat /etc/passwd | grep $USER | cut -d\':\' -f3):$(cat /etc/passwd | grep $USER | cut -d\':\' -f4) -w $(pwd) -v $(pwd):$(pwd) --name  tiolktrack_integrationTestRunnerContainer --rm --network dbIntegrationTestNetwork openjdk:8 ./gradlew --debug --gradle-user-home /tmp --project-cache-dir /tmp dbIntegrationTest'
 }
 
 task cleanAfterDbIntegrationTestsRun(type: Exec) {
