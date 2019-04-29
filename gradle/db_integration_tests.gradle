@@ -63,7 +63,7 @@ task runAllDbIntegrationTests(type: Exec) {
 			commandLine 'docker', 'run', '--rm', '--name', 'dbIntegrationTestPostgresContainer', '-e', 'POSTGRESS_PASSWORD=dbIntegrationTest', '-e', 'POSTGRES_USER=tiolktrack', '-d', '--network', 'dbIntegrationTestNetwork', 'postgres'
 		}
 	}
-	commandLine 'bash', '-c', 'docker run -u $(cat /etc/passwd | grep $USER | cut -d\':\' -f3):$(cat /etc/passwd | grep $USER | cut -d\':\' -f4) -w $(pwd) -v $(pwd):$(pwd) --name  tiolktrack_integrationTestRunnerContainer --network dbIntegrationTestNetwork gradle gradle --debug --gradle-user-home /tmp --project-cache-dir /tmp dbIntegrationTest'
+	commandLine 'bash', '-c', 'docker run -u $(cat /etc/passwd | grep $USER | cut -d\':\' -f3):$(cat /etc/passwd | grep $USER | cut -d\':\' -f4) -w $(pwd) -v $(pwd):$(pwd) --name  tiolktrack_integrationTestRunnerContainer --network dbIntegrationTestNetwork -it gradle sh'
 }
 
 task cleanAfterDbIntegrationTestsRun(type: Exec) {
