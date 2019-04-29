@@ -11,7 +11,7 @@ node {
 		}
 
 		stage('Database Integration Tests') {
-			sh './gradlew --debug runAllDbIntegrationTests'
+			sh './gradlew -Pdb.integration.test.network=jenkins_default runAllDbIntegrationTests'
 		}
 
 		stage('SonarQube analysis') {

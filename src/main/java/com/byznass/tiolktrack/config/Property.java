@@ -3,6 +3,7 @@ package com.byznass.tiolktrack.config;
 public enum Property {
 
 	DB_HOST("DB_HOST"),
+	DB_INTEGRATION_TEST_HOST("DB_INTEGRATION_TEST_HOST"),
 	DB_USERNAME("DB_USERNAME"),
 	DB_PASSWORD("DB_PASSWORD");
 

@@ -32,7 +32,8 @@ task dbIntegrationTest(type: Test) {
 	group = LifecycleBasePlugin.VERIFICATION_GROUP
 	description = "Runs all database integration tests"
 
-	dependsOn 'copyDbIntegrationTestResources'
+	dependsOn 'copyDbIntegrationTestResources', 'startPostgresContainer'
+	finalizedBy 'stopPostgresContainer'
 
 	testClassesDirs = sourceSets.dbIntegrationTest.output.classesDirs
 	classpath = sourceSets.dbIntegrationTest.runtimeClasspath
@@ -51,38 +52,20 @@ task dbIntegrationTestInteractive(type: Exec) {
 	dependsOn 'copyDbIntegrationTestResources'
 }
 
-task runAllDbIntegrationTests(type: Exec) {
+task startPostgresContainer(type: Exec) {
 
-	finalizedBy 'cleanAfterDbIntegrationTestsRun'
-
-	doFirst {
-		exec {
-			commandLine 'docker', 'network', 'create', 'dbIntegrationTestNetwork'
-		}
-		exec {
-			commandLine 'docker', 'run', '--rm', '--name', 'dbIntegrationTestPostgresContainer', '-e', 'POSTGRESS_PASSWORD=dbIntegrationTest', '-e', 'POSTGRES_USER=tiolktrack', '-d', '--network', 'dbIntegrationTestNetwork', 'postgres'
-		}
-		exec {
-			commandLine 'bash', '-c', 'pwd'
-		}
-		exec {
-			commandLine 'bash', '-c', 'ls -la'
-		}
+	if (project.hasProperty('db.integration.test.network')) {
+		println('Adding a network to newly created docker container')
+		commandLine 'docker', 'run', '--rm', '--name', 'dbIntegrationTestPostgresContainer', '-e', 'POSTGRESS_PASSWORD=dbIntegrationTest', '-e', 'POSTGRES_USER=tiolktrack', '-d', '-p', '5432:5432', '--network', project.getProperties().get('db.integration.test.network'), 'postgres'
+	} else {
+		println('Creating postgres container without a custom network')
+		commandLine 'docker', 'run', '--rm', '--name', 'dbIntegrationTestPostgresContainer', '-e', 'POSTGRESS_PASSWORD=dbIntegrationTest', '-e', 'POSTGRES_USER=tiolktrack', '-d', '-p', '5432:5432', 'postgres'
 	}
-	commandLine 'bash', '-c', 'docker run -u $(cat /etc/passwd | grep $USER | cut -d\':\' -f3):$(cat /etc/passwd | grep $USER | cut -d\':\' -f4) -w /tiolktrack -v /:/tiolktrack --name  tiolktrack_integrationTestRunnerContainer --network dbIntegrationTestNetwork debian ping 8.8.8.8'
 }
 
-task cleanAfterDbIntegrationTestsRun(type: Exec) {
+task stopPostgresContainer(type: Exec) {
 
-	doFirst {
-		exec {
-			commandLine 'bash', '-c', 'if [[ $(docker container ls -f "name=dbIntegrationTestPostgresContainer" -q | grep . -q; echo $?) -eq 0 ]] ; then docker stop dbIntegrationTestPostgresContainer ; fi'
-		}
-		exec {
-			commandLine 'bash', '-c', 'if [[ $(docker container ls -f "name=tiolktrack_integrationTestRunnerContainer" -q | grep . -q; echo $?) -eq 0 ]] ; then docker stop tiolktrack_integrationTestRunnerContainer ; fi'
-		}
-	}
-	commandLine 'bash', '-c', 'if [[ $(docker network ls -f "name=dbIntegrationTestNetwork" -q | grep . -q; echo $?) -eq 0 ]] ; then docker network rm dbIntegrationTestNetwork ; fi'
+	commandLine 'bash', '-c', 'if [[ $(docker container ls -f "name=dbIntegrationTestPostgresContainer" -q | grep . -q; echo $?) -eq 0 ]] ; then docker stop dbIntegrationTestPostgresContainer ; fi'
 }
 
 task copyDbIntegrationTestResources(type: Copy) {
