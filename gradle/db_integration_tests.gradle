@@ -29,35 +29,35 @@ task copyDbIntegrationTestResources(type: Copy) {
 	into sourceSets.dbIntegrationTest.output.resourcesDir
 }
 
-task startPostgresContainer(type: Exec) {
-
-	if (project.hasProperty('db.integration.test.network')) {
-		println('Adding a network to newly created docker container')
-		commandLine 'docker', 'run', '--rm', '--name', 'dbIntegrationTestPostgresContainer', '-e', 'POSTGRESS_PASSWORD=dbIntegrationTest', '-e', 'POSTGRES_USER=tiolktrack', '-d', '-p', '5432:5432', '--network', project.getProperties().get('db.integration.test.network'), 'postgres'
-	} else {
-		println('Creating postgres container without a custom network')
-		commandLine 'docker', 'run', '--rm', '--name', 'dbIntegrationTestPostgresContainer', '-e', 'POSTGRESS_PASSWORD=dbIntegrationTest', '-e', 'POSTGRES_USER=tiolktrack', '-d', '-p', '5432:5432', 'postgres'
-	}
-}
-
-task stopPostgresContainer(type: Exec) {
-
-	commandLine 'bash', '-c', 'if [[ $(docker container ls -f "name=dbIntegrationTestPostgresContainer" -q | grep . -q; echo $?) -eq 0 ]] ; then docker stop dbIntegrationTestPostgresContainer ; fi'
-}
-
 task dbIntegrationTest(type: Test) {
 
 	group = LifecycleBasePlugin.VERIFICATION_GROUP
 	description = "Runs all database integration tests"
 
+	doFirst {
+		if (project.hasProperty('db.integration.test.network')) {
+			println('Adding a network to newly created docker container')
+			exec {
+				commandLine 'docker', 'run', '--rm', '--name', 'dbIntegrationTestPostgresContainer', '-e', 'POSTGRESS_PASSWORD=dbIntegrationTest', '-e', 'POSTGRES_USER=tiolktrack', '-d', '-p', '5432:5432', '--network', project.getProperties().get('db.integration.test.network'), 'postgres'
+			}
+		} else {
+			println('Creating postgres container without a custom network')
+			exec {
+				commandLine 'docker', 'run', '--rm', '--name', 'dbIntegrationTestPostgresContainer', '-e', 'POSTGRESS_PASSWORD=dbIntegrationTest', '-e', 'POSTGRES_USER=tiolktrack', '-d', '-p', '5432:5432', 'postgres'
+			}
+		}
+	}
+
+	doLast {
+		exec {
+			commandLine 'bash', '-c', 'if [[ $(docker container ls -f "name=dbIntegrationTestPostgresContainer" -q | grep . -q; echo $?) -eq 0 ]] ; then docker stop dbIntegrationTestPostgresContainer ; fi'
+		}
+	}
 
 	testClassesDirs = sourceSets.dbIntegrationTest.output.classesDirs
 	classpath = sourceSets.dbIntegrationTest.runtimeClasspath
 
-	outputs.upToDateWhen { false }
-
-	dependsOn copyDbIntegrationTestResources, startPostgresContainer
-	finalizedBy stopPostgresContainer
+	dependsOn copyDbIntegrationTestResources
 	mustRunAfter test
 }
 
