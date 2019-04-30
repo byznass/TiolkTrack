@@ -15,9 +15,9 @@ repositories {
 	jcenter()
 }
 
-apply from: "$projectDir/gradle/tests.gradle"
 apply from: "$projectDir/gradle/war_copy_files.gradle"
 apply from: "$projectDir/gradle/db_integration_tests.gradle"
+apply from: "$projectDir/gradle/tests.gradle"
 
 dependencies {
 	testCompile group: 'junit', name: 'junit', version: '4.12'

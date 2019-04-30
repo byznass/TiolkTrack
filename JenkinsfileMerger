@@ -6,7 +6,7 @@ node {
 
 	try {
 
-		stage('Test') {
+		stage('Unit Test') {
 			sh './gradlew cleanTest test'
 		}
 
@@ -90,6 +90,6 @@ node {
 			}
 		}
 	} finally {
-		jacoco execPattern: '**/coverageForAllTests.exec'
+		jacoco execPattern: 'build/jacoco/coverageForAllTests.exec'
 	}
 }

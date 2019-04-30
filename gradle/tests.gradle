@@ -6,7 +6,6 @@ def fileWithCoverageForAllTests = "$buildDir/jacoco/coverageForAllTests.exec"
 
 jacoco {
 	toolVersion = "0.8.3"
-	reportsDir = file(fileWithCoverageForAllTests)
 }
 
 sonarqube {
@@ -15,20 +14,57 @@ sonarqube {
 	}
 }
 
-jacocoTestReport {
-	executionData = project.fileTree(dir: '.', include: '**/build/jacoco/*.exec')
-	classDirectories = project.fileTree(dir: '.', include: '**/build/classes/main/**/*', excludes: [])
-	sourceDirectories = project.fileTree(dir: '.', include: '**/src/main/java/**/*')
+task jacocoUnitTestReport(type: JacocoReport) {
+
+	reports {
+		xml.enabled false
+		csv.enabled false
+		html.destination file("${buildDir}/jacocoUnitTestHtml")
+	}
+
+	executionData = files("$buildDir/jacoco/test.exec")
+	classDirectories = files(sourceSets.main.java.outputDir)
+	sourceDirectories = files(sourceSets.main.java.srcDirs)
+
+	dependsOn test
 }
 
-task jacocoMergeTest(type: JacocoMerge) {
+task jacocoDbIntegrationTestReport(type: JacocoReport) {
+
+	reports {
+		xml.enabled false
+		csv.enabled false
+		html.destination file("${buildDir}/jacocoDbIntegrationTestHtml")
+	}
+
+	executionData = files("$buildDir/jacoco/dbIntegrationTest.exec")
+	classDirectories = files(sourceSets.main.java.outputDir)
+	sourceDirectories = files(sourceSets.main.java.srcDirs)
+
+	dependsOn dbIntegrationTest
+}
+
+task jacocoMerge(type: JacocoMerge) {
+
+	executionData = files("$buildDir/jacoco/test.exec", "$buildDir/jacoco/dbIntegrationTest.exec")
 	destinationFile = file(fileWithCoverageForAllTests)
-	executionData = project.fileTree(dir: '.', include: '**/build/jacoco/test.exec')
+
+	dependsOn test, dbIntegrationTest
 }
 
-task jacocoMerge(dependsOn: ['jacocoMergeTest']) {
+task jacocoAllTestReport(type: JacocoReport) {
 
-	// used to run the other merge tasks
+	reports {
+		xml.enabled false
+		csv.enabled false
+		html.destination file("${buildDir}/jacocoAllTestHtml")
+	}
+
+	executionData = files(fileWithCoverageForAllTests)
+	classDirectories = files(sourceSets.main.java.outputDir)
+	sourceDirectories = files(sourceSets.main.java.srcDirs)
+
+	dependsOn tasks.jacocoMerge
 }
 
 tasks.sonarqube.dependsOn jacocoMerge
