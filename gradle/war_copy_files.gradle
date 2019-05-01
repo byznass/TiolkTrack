@@ -1,0 +1,13 @@
+/**
+ * When the application is packaged in a war, we need some files to be copied (logback.xml, liquibase changesets etc.)
+ */
+war {
+	from("$projectDir/log") {
+		include 'logback.xml'
+		into 'WEB-INF/classes'
+	}
+	from("$projectDir/db/liquibase") {
+		include '*.xml'
+		into 'WEB-INF/classes'
+	}
+}

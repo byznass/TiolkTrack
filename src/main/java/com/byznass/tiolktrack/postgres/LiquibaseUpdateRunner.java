@@ -18,7 +18,7 @@ import java.sql.SQLException;
 public class LiquibaseUpdateRunner {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(LiquibaseUpdateRunner.class);
-	private static final String CHANGE_LOG_FILE = "db/databaseChangeLog.xml";
+	private static final String CHANGE_LOG_FILE = "databaseChangeLog.xml";
 
 	private final ConnectionProvider connectionProvider;
 
@@ -42,6 +42,23 @@ public class LiquibaseUpdateRunner {
 		} catch (LiquibaseException | ConnectionFailureException | SQLException e) {
 			LOGGER.error("Liquibase update failed", e);
 			throw new LiquibaseUpdateException("Liquibase update failed", e);
+		}
+	}
+
+	public void dropAll() {
+
+		LOGGER.info("Starting Liquibase dropAll");
+
+		try (Connection connection = connectionProvider.getConnection()) {
+			JdbcConnection jdbcConnection = new JdbcConnection(connection);
+			Database database = DatabaseFactory.getInstance().findCorrectDatabaseImplementation(jdbcConnection);
+
+			Liquibase liquibase = new Liquibase(CHANGE_LOG_FILE, new ClassLoaderResourceAccessor(), database);
+			liquibase.dropAll();
+			LOGGER.info("Finished Liquibase dropAll");
+		} catch (LiquibaseException | ConnectionFailureException | SQLException e) {
+			LOGGER.error("Liquibase dropAll failed", e);
+			throw new LiquibaseUpdateException("Liquibase dropAll failed", e);
 		}
 	}
 }

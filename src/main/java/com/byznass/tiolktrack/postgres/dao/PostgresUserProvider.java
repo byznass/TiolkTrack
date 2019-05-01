@@ -40,7 +40,6 @@ public class PostgresUserProvider implements UserProvider {
 			LOGGER.error("Error while retrieving User with userId=\'{}\' from postgres database", userId, e);
 			throw new TiolkTrackException(String.format("Cannot retrieve User with userId =  \'%s\' from database", userId), e);
 		}
-
 	}
 
 	@Override

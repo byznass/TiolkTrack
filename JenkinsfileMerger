@@ -1,52 +1,56 @@
 #!/usr/bin/env groovy
 
-node{
+node {
 
-    final scmVars = checkout(scm)
+	final scmVars = checkout(scm)
 
-    try{
+	try {
 
-        stage('Test'){
-            sh './gradlew cleanTest test jacocoMerge'
-        }
+		stage('Unit Tests') {
+			sh './gradlew cleanTest test'
+		}
 
-        stage('SonarQube analysis') {
-            withSonarQubeEnv('sonarqube-byznass') {
-                withCredentials([
-                        string(credentialsId: 'sonarqube-byznass_token', variable: 'SONAR_LOGIN'),
-                        string(credentialsId: 'github-token-sonarqube', variable: 'GITHUB_TOKEN')
-                ]) {
+		stage('Database Integration Tests') {
+			sh './gradlew -Pdb.integration.test.network=dbIntegrationTestNetwork cleanDbIntegrationTest dbIntegrationTest'
+		}
 
-                    // It's important to add --info because of SONARJNKNS-281
-                    sh '''#!/bin/bash
+		stage('SonarQube analysis') {
+			withSonarQubeEnv('sonarqube-byznass') {
+				withCredentials([
+						string(credentialsId: 'sonarqube-byznass_token', variable: 'SONAR_LOGIN'),
+						string(credentialsId: 'github-token-sonarqube', variable: 'GITHUB_TOKEN')
+				]) {
+
+					// It's important to add --info because of SONARJNKNS-281
+					sh '''#!/bin/bash
 						./gradlew --info sonarqube \
 						-Dsonar.projectKey=TiolkTrack-Server \
 						-Dsonar.projectName=TiolkTrack-Server \
 						-Dsonar.login=$SONAR_LOGIN
 					'''
-                }
-            }
-        }
+				}
+			}
+		}
 
-        stage('Docker image building'){
-            if (CHANGE_TARGET == 'master') {
-                withDockerRegistry([credentialsId: "byznass-dockerhub", url: ""]) {
-                    sh '''#!/bin/bash
+		stage('Docker image building') {
+			if (CHANGE_TARGET == 'master') {
+				withDockerRegistry([credentialsId: "byznass-dockerhub", url: ""]) {
+					sh '''#!/bin/bash
                     docker build -t byznass/tiolktrack-server:$(git rev-parse HEAD) .
                     docker tag byznass/tiolktrack-server:$(git rev-parse HEAD) byznass/tiolktrack-server:latest
                     docker push byznass/tiolktrack-server:$(git rev-parse HEAD)
                     docker push byznass/tiolktrack-server:latest
                 '''
-                }
-            }else{
-                echo 'Skipped Docker image building because the branch is not master'
-            }
-        }
+				}
+			} else {
+				echo 'Skipped Docker image building because the branch is not master'
+			}
+		}
 
-        stage('k8s deployment'){
-            if (CHANGE_TARGET == 'master') {
-                withCredentials([file(credentialsId: 'jenkins-to-k8s', variable: 'GC_KEY')]) {
-                    sh '''#!/bin/bash
+		stage('k8s deployment') {
+			if (CHANGE_TARGET == 'master') {
+				withCredentials([file(credentialsId: 'jenkins-to-k8s', variable: 'GC_KEY')]) {
+					sh '''#!/bin/bash
                     gcloud auth activate-service-account --key-file=${GC_KEY}
                     gcloud config set project tiolktrack-1548605545784
                     gcloud config set compute/zone europe-north1-c
@@ -54,15 +58,15 @@ node{
                     kubectl apply -R -f k8s
                     kubectl set image deployments/server-deployment server=byznass/tiolktrack-server:$(git rev-parse HEAD)
                 '''
-                }
-            } else {
-                echo 'Skipped deployment because the branch is not master'
-            }
-        }
+				}
+			} else {
+				echo 'Skipped deployment because the branch is not master'
+			}
+		}
 
-        stage('Merge PR'){
-            withCredentials([usernamePassword(credentialsId: 'byznass-dev-github-repo', usernameVariable: 'username', passwordVariable: 'token')]){
-                sh ''' #!/bin/bash
+		stage('Merge PR') {
+			withCredentials([usernamePassword(credentialsId: 'byznass-dev-github-repo', usernameVariable: 'username', passwordVariable: 'token')]) {
+				sh ''' #!/bin/bash
                     RESPONSE=$(curl -X PUT -u $username:$token https://api.github.com/repos/byznass/TiolkTrack-Server/pulls/$CHANGE_ID/merge --write-out "%{http_code}" --silent --output /dev/null)
                     
                     if [ "$RESPONSE" -ne "200" ] 
@@ -71,22 +75,21 @@ node{
 						exit 1
 					fi
                 '''
-            }
-        }
+			}
+		}
 
-        stage('Send result to GitHub') {
-            withCredentials([string(credentialsId: 'byznass-dev-github-repo_hook', variable: 'TOKEN')]) {
-                env.HASH="${scmVars.GIT_COMMIT}"
-                sh '''
+		stage('Send result to GitHub') {
+			withCredentials([string(credentialsId: 'byznass-dev-github-repo_hook', variable: 'TOKEN')]) {
+				env.HASH = "${scmVars.GIT_COMMIT}"
+				sh '''
                     curl "https://api.github.com/repos/byznass/TiolkTrack-Server/statuses/${HASH}?access_token=$TOKEN" \
                         -H "Content-Type: application/json" \
                         -X POST \
                         -d "{\\\"description\\\": \\\"Deployment and PR merging completed\\\", \\\"state\\\": \\\"success\\\", \\\"context\\\": \\\"jenkinsMerger\\\", \\\"target_url\\\": \\\"$BUILD_URL\\\"}"
                 '''
-            }
-        }
-    } finally{
-        junit '**/build/test-results/**/*.xml'
-        jacoco execPattern: '**/coverageForAllTests.exec'
-    }
+			}
+		}
+	} finally {
+		jacoco execPattern: 'build/jacoco/coverageForAllTests.exec'
+	}
 }

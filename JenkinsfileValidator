@@ -1,13 +1,17 @@
 #!/usr/bin/env groovy
 
-node{
+node {
 
 	final scmVars = checkout(scm)
 
-	try{
+	try {
 
-		stage('Test'){
-			sh './gradlew cleanTest test jacocoMerge'
+		stage('Unit Tests') {
+			sh './gradlew cleanTest test'
+		}
+
+		stage('Database Integration Tests') {
+			sh './gradlew -Pdb.integration.test.network=dbIntegrationTestNetwork cleanDbIntegrationTest dbIntegrationTest'
 		}
 
 		stage('SonarQube analysis') {
@@ -36,7 +40,7 @@ node{
 
 		stage('Send result to GitHub') {
 			withCredentials([string(credentialsId: 'byznass-dev-github-repo_hook', variable: 'TOKEN')]) {
-				env.HASH="${scmVars.GIT_COMMIT}"
+				env.HASH = "${scmVars.GIT_COMMIT}"
 				sh '''
                     curl "https://api.github.com/repos/byznass/TiolkTrack-Server/statuses/${HASH}?access_token=$TOKEN" \
                         -H "Content-Type: application/json" \
@@ -45,8 +49,7 @@ node{
                 '''
 			}
 		}
-	} finally{
-		junit '**/build/test-results/**/*.xml'
-		jacoco execPattern: '**/coverageForAllTests.exec'
+	} finally {
+		jacoco execPattern: 'build/jacoco/coverageForAllTests.exec'
 	}
 }
