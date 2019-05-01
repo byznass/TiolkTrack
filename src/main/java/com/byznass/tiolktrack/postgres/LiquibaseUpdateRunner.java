@@ -18,7 +18,7 @@ import java.sql.SQLException;
 public class LiquibaseUpdateRunner {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(LiquibaseUpdateRunner.class);
-	private static final String CHANGE_LOG_FILE = "liquibase/databaseChangeLog.xml";
+	private static final String CHANGE_LOG_FILE = "databaseChangeLog.xml";
 
 	private final ConnectionProvider connectionProvider;
 

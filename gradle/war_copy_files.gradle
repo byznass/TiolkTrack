@@ -6,8 +6,8 @@ war {
 		include 'logback.xml'
 		into 'WEB-INF/classes'
 	}
-	from("$projectDir/db") {
-		include 'liquibase/'
+	from("$projectDir/db/liquibase") {
+		include '*.xml'
 		into 'WEB-INF/classes'
 	}
 }

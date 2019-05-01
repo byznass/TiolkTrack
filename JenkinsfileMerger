@@ -6,7 +6,7 @@ node {
 
 	try {
 
-		stage('Unit Test') {
+		stage('Unit Tests') {
 			sh './gradlew cleanTest test'
 		}
 

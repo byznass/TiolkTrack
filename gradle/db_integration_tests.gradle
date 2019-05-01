@@ -11,7 +11,7 @@ sourceSets {
 		}
 
 		resources {
-			srcDirs "$projectDir/src/dbIntegrationTest/resources"
+			srcDirs += "$projectDir/src/dbIntegrationTest/resources"
 		}
 	}
 }
@@ -23,8 +23,8 @@ configurations {
 
 task copyDbIntegrationTestResources(type: Copy) {
 
-	from("$projectDir/db") {
-		include 'liquibase/'
+	from("$projectDir/db/liquibase") {
+		include '*.xml'
 	}
 	into sourceSets.dbIntegrationTest.output.resourcesDir
 }
