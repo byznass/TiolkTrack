@@ -10,7 +10,7 @@ public class User {
 	private final byte[] passHash;
 	private final byte[] passSalt;
 
-	public User(@NotNull String id, @NotNull byte[] passHash, @NotNull byte[] passSalt) {
+	public User(@NotNull String id, @NotNull byte[] passHash, @NotNull byte[] passSalt) throws RuntimeException {
 
 		if (id == null || passHash == null || passSalt == null) {
 			throw new IllegalArgumentException("All parameters must be non null.");
