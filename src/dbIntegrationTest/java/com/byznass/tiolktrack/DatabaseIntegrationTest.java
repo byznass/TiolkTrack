@@ -5,7 +5,7 @@ import com.byznass.tiolktrack.postgres.IntegrationConnectionFactory;
 import com.byznass.tiolktrack.postgres.LiquibaseUpdateRunner;
 import org.junit.Before;
 
-public class DatabaseIntegrationTest {
+public abstract class DatabaseIntegrationTest {
 
 	protected IntegrationConnectionFactory integrationConnectionFactory;
 
