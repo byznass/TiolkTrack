@@ -13,14 +13,8 @@ sonarqube {
 		properties["sonar.jacoco.reportPath"] = fileWithCoverageForAllTests
 		properties["sonar.tests"] += sourceSets.dbIntegrationTest.java.srcDirs
 		properties["sonar.java.test.binaries"] += sourceSets.dbIntegrationTest.output.classesDirs
-	}
-}
-
-task xxx {
-	doFirst {
-		def x = files(sourceSets.dbIntegrationTest.output.classesDirs, sourceSets.test.output.classesDirs)
-		println(x[0])
-		println(x[1])
+		properties["sonar.junit.reportPaths"] += "$buildDir/test-results/dbIntegrationTest"
+		properties["sonar.junit.reportPaths"] += "$buildDir/test-results/test"
 	}
 }
 
