@@ -11,10 +11,10 @@ jacoco {
 sonarqube {
 	properties {
 		properties["sonar.jacoco.reportPath"] = fileWithCoverageForAllTests
+		properties["sonar.sources"] += sourceSets.main.java.srcDirs
 		properties["sonar.tests"] += sourceSets.dbIntegrationTest.java.srcDirs
 		properties["sonar.java.test.binaries"] += sourceSets.dbIntegrationTest.output.classesDirs
-		properties["sonar.junit.reportPaths"] += "$buildDir/test-results/dbIntegrationTest"
-		properties["sonar.junit.reportPaths"] += "$buildDir/test-results/test"
+		properties["sonar.junit.reportPaths"] = files("$buildDir/test-results/dbIntegrationTest", "$buildDir/test-results/test")
 	}
 }
 
