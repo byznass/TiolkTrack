@@ -9,9 +9,9 @@ jacoco {
 }
 
 sonarqube {
-	properties {
-		property "sonar.jacoco.reportPath", fileWithCoverageForAllTests
-	}
+	properties["sonar.jacoco.reportPath"] = fileWithCoverageForAllTests
+	properties["sonar.tests"] = files(sourceSets.dbIntegrationTest.java.srcDirs, sourceSets.test.java.srcDirs)
+	properties["sonar.java.test.binaries"] = files(sourceSets.dbIntegrationTest.output.classesDirs, sourceSets.test.output.classesDirs)
 }
 
 task jacocoUnitTestReport(type: JacocoReport) {
