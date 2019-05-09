@@ -7,6 +7,7 @@ import com.byznass.tiolktrack.kernel.dao.NoSuchGpsException;
 import com.byznass.tiolktrack.kernel.model.Location;
 import com.byznass.tiolktrack.kernel.model.gps.Gps;
 import com.byznass.tiolktrack.kernel.model.gps.GpsWithLocations;
+import com.byznass.tiolktrack.postgres.ConnectionProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -21,13 +22,13 @@ public class PostgresGpsProvider implements GpsProvider {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(PostgresGpsProvider.class);
 
-	private final Connection connection;
+	private final ConnectionProvider connectionProvider;
 	private final LocationProvider locationProvider;
 
 	@Inject
-	public PostgresGpsProvider(Connection connection, LocationProvider locationProvider) {
+	public PostgresGpsProvider(ConnectionProvider connectionProvider, LocationProvider locationProvider) {
 
-		this.connection = connection;
+		this.connectionProvider = connectionProvider;
 		this.locationProvider = locationProvider;
 	}
 
@@ -48,7 +49,9 @@ public class PostgresGpsProvider implements GpsProvider {
 		LOGGER.info("Retrieving simple GPS entity (\'{},{}\') from postgres database", userID, name);
 
 		String query = "SELECT * FROM gps WHERE clientId=? AND name=?";
-		try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+		try (Connection connection = connectionProvider.getConnection();
+			 PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+
 			preparedStatement.setString(1, userID);
 			preparedStatement.setString(2, name);
 

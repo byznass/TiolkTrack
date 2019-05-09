@@ -3,6 +3,7 @@ package com.byznass.tiolktrack.postgres.dao;
 import com.byznass.tiolktrack.kernel.TiolkTrackException;
 import com.byznass.tiolktrack.kernel.dao.LocationProvider;
 import com.byznass.tiolktrack.kernel.model.Location;
+import com.byznass.tiolktrack.postgres.ConnectionProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,12 +20,12 @@ public class PostgresLocationProvider implements LocationProvider {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(PostgresLocationProvider.class);
 
-	private final Connection connection;
+	private final ConnectionProvider connectionProvider;
 
 	@Inject
-	public PostgresLocationProvider(Connection connection) {
+	public PostgresLocationProvider(ConnectionProvider connectionProvider) {
 
-		this.connection = connection;
+		this.connectionProvider = connectionProvider;
 	}
 
 	@Override
@@ -33,7 +34,9 @@ public class PostgresLocationProvider implements LocationProvider {
 		LOGGER.info("Retrieving Locations for gps (\'{},{}\') from postgres database", userId, gpsName);
 
 		String query = "SELECT * FROM location WHERE clientId=? AND gpsName=?";
-		try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+		try (Connection connection = connectionProvider.getConnection();
+			 PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+
 			preparedStatement.setString(1, userId);
 			preparedStatement.setString(2, gpsName);
 
