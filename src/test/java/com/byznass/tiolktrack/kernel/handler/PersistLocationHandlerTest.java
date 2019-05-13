@@ -22,6 +22,8 @@ public class PersistLocationHandlerTest {
 	private LocationPersister locationPersister;
 	@Mock
 	private GpsProvider gpsProvider;
+	@Mock
+	private CoordinateValidator coordinateValidator;
 
 	private PersistLocationHandler persistLocationHandler;
 
@@ -30,13 +32,13 @@ public class PersistLocationHandlerTest {
 
 		initMocks(this);
 
-		persistLocationHandler = new PersistLocationHandler(locationPersister, gpsProvider);
+		persistLocationHandler = new PersistLocationHandler(locationPersister, gpsProvider, coordinateValidator);
 	}
 
 	@Test(expected = NoSuchGpsException.class)
 	public void givenNonExistentGpsWithGivenIdWhenPersistingThenThrowException() {
 
-		Location location = new Location("xxx", "yyy", LocalDateTime.now(), "userId", "name");
+		Location location = new Location("12.7759", "47.8856", LocalDateTime.now(), "userId", "name");
 
 		when(gpsProvider.getGps("userId", "name")).thenThrow(NoSuchGpsException.class);
 
@@ -46,7 +48,7 @@ public class PersistLocationHandlerTest {
 	@Test
 	public void givenExistingGpsWhilePersistingLocationThenSuccess() {
 
-		Location location = new Location("xxx", "yyy", LocalDateTime.now(), "userId", "name");
+		Location location = new Location("12.7759", "47.8856", LocalDateTime.now(), "userId", "name");
 
 		when(gpsProvider.getGps("userId", "name")).thenReturn(new Gps("userId", "name"));
 
@@ -59,10 +61,20 @@ public class PersistLocationHandlerTest {
 	@Test(expected = TiolkTrackException.class)
 	public void givenExceptionWhilePersistingLocationThenRethrow() {
 
-		Location location = new Location("xxx", "yyy", LocalDateTime.now(), "userId", "name");
+		Location location = new Location("12.7759", "47.8856", LocalDateTime.now(), "userId", "name");
 
 		when(gpsProvider.getGps("userId", "name")).thenReturn(new Gps("userId", "name"));
 		doThrow(TiolkTrackException.class).when(locationPersister).persistLocation(location);
+
+		persistLocationHandler.persist(location);
+	}
+
+	@Test(expected = InvalidLocationException.class)
+	public void givenFailedValidationOfCoordinatesThenRethrowException() {
+
+		Location location = new Location("xxx", "yyy", LocalDateTime.now(), "userId", "name");
+
+		doThrow(InvalidLocationException.class).when(coordinateValidator).validate(location);
 
 		persistLocationHandler.persist(location);
 	}
