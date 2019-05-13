@@ -22,6 +22,7 @@ import com.byznass.tiolktrack.postgres.ConnectionProvider;
 import com.byznass.tiolktrack.postgres.dao.*;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 
+import javax.inject.Singleton;
 import java.sql.Connection;
 
 public class TiolkTrackBinder extends AbstractBinder {
@@ -41,6 +42,8 @@ public class TiolkTrackBinder extends AbstractBinder {
 		bind(AuthenticationHandler.class).to(AuthenticationHandler.class);
 		bind(PersistUserHandler.class).to(PersistUserHandler.class);
 		bind(PersistGpsHandler.class).to(PersistGpsHandler.class);
+
+		bind(CoordinateValidator.class).to(CoordinateValidator.class).in(Singleton.class);
 
 		bind(PostgresGpsProvider.class).to(GpsProvider.class);
 		bind(PostgresLocationProvider.class).to(LocationProvider.class);

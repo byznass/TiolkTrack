@@ -9,7 +9,7 @@ import java.math.BigDecimal;
 import static com.byznass.tiolktrack.kernel.handler.InvalidLocationException.Reason.INVALID_LATITUDE;
 import static com.byznass.tiolktrack.kernel.handler.InvalidLocationException.Reason.INVALID_LONGITUDE;
 
-class CoordinateValidator {
+public class CoordinateValidator {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(CoordinateValidator.class);
 
