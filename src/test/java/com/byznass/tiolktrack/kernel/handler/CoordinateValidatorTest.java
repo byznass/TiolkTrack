@@ -22,6 +22,21 @@ public class CoordinateValidatorTest {
 	}
 
 	@Test
+	public void givenTooLongLatitudeThenThrowException() {
+
+		Location location =
+				new Location("-15.000000000000000000000000001", "0.00", LocalDateTime.now(), "userId", "gpsName");
+
+		try {
+			coordinateValidator.validate(location);
+			fail("Call to the validate method must throw an exception.");
+		} catch (InvalidLocationException e) {
+
+			assertEquals(INVALID_LATITUDE, e.getReason());
+		}
+	}
+
+	@Test
 	public void givenTooSmallLatitudeThenThrowException() {
 
 		Location location = new Location("-90.00001", "0.00", LocalDateTime.now(), "userId", "gpsName");
@@ -60,6 +75,21 @@ public class CoordinateValidatorTest {
 		} catch (InvalidLocationException e) {
 
 			assertEquals(INVALID_LATITUDE, e.getReason());
+		}
+	}
+
+	@Test
+	public void givenTooLongLongitudeThenThrowException() {
+
+		Location location =
+				new Location("-15.00", "+15.00000000000000000001", LocalDateTime.now(), "userId", "gpsName");
+
+		try {
+			coordinateValidator.validate(location);
+			fail("Call to the validate method must throw an exception.");
+		} catch (InvalidLocationException e) {
+
+			assertEquals(INVALID_LONGITUDE, e.getReason());
 		}
 	}
 

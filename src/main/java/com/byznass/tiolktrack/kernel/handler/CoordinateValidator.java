@@ -15,8 +15,11 @@ class CoordinateValidator {
 
 	private static final BigDecimal MIN_LATITUDE = new BigDecimal("-90");
 	private static final BigDecimal MAX_LATITUDE = new BigDecimal("90");
+	private static final int MAX_LATITUDE_LENGTH = 20;
+
 	private static final BigDecimal MIN_LONGITUDE = new BigDecimal("-180");
 	private static final BigDecimal MAX_LONGITUDE = new BigDecimal("180");
+	private static final int MAX_LONGITUDE_LENGTH = 20;
 
 	void validate(Location location) {
 
@@ -25,6 +28,11 @@ class CoordinateValidator {
 	}
 
 	private void validateLatitude(String latitude) {
+
+		if (latitude.length() > MAX_LATITUDE_LENGTH) {
+			LOGGER.error("Given Latitude string has too many characters");
+			throw new InvalidLocationException(INVALID_LATITUDE);
+		}
 
 		BigDecimal latitudeValue;
 		try {
@@ -41,6 +49,11 @@ class CoordinateValidator {
 	}
 
 	private void validateLongitude(String longitude) {
+
+		if (longitude.length() > MAX_LONGITUDE_LENGTH) {
+			LOGGER.error("Given Longitude string has too many characters");
+			throw new InvalidLocationException(INVALID_LONGITUDE);
+		}
 
 		BigDecimal longitudeValue;
 		try {
