@@ -33,6 +33,7 @@ public class TiolkTrackApplication extends ResourceConfig {
 		register(AuthenticationExceptionMapper.class);
 		register(InvalidDtoExceptionMapper.class);
 		register(InvalidIdentifierExceptionMapper.class);
+		register(InvalidLocationExceptionMapper.class);
 		register(NoSuchGpsExceptionMapper.class);
 		register(NoLocationForGpsExceptionMapper.class);
 		register(NoUserWithSuchIdExceptionMapper.class);

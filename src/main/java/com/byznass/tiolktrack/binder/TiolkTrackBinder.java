@@ -22,6 +22,8 @@ import com.byznass.tiolktrack.postgres.ConnectionProvider;
 import com.byznass.tiolktrack.postgres.dao.*;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 
+import javax.inject.Singleton;
+
 public class TiolkTrackBinder extends AbstractBinder {
 
 	@Override
@@ -39,6 +41,8 @@ public class TiolkTrackBinder extends AbstractBinder {
 		bind(AuthenticationHandler.class).to(AuthenticationHandler.class);
 		bind(PersistUserHandler.class).to(PersistUserHandler.class);
 		bind(PersistGpsHandler.class).to(PersistGpsHandler.class);
+
+		bind(CoordinateValidator.class).to(CoordinateValidator.class).in(Singleton.class);
 
 		bind(PostgresGpsProvider.class).to(GpsProvider.class);
 		bind(PostgresLocationProvider.class).to(LocationProvider.class);
@@ -68,6 +72,7 @@ public class TiolkTrackBinder extends AbstractBinder {
 		bind(AuthenticationExceptionMapper.class).to(AuthenticationExceptionMapper.class);
 		bind(NoSuchGpsExceptionMapper.class).to(NoSuchGpsExceptionMapper.class);
 		bind(InvalidIdentifierExceptionMapper.class).to(InvalidIdentifierExceptionMapper.class);
+		bind(InvalidLocationExceptionMapper.class).to(InvalidLocationExceptionMapper.class);
 		bind(NoLocationForGpsExceptionMapper.class).to(NoLocationForGpsExceptionMapper.class);
 		bind(NoUserWithSuchIdExceptionMapper.class).to(NoUserWithSuchIdExceptionMapper.class);
 		bind(RuntimeExceptionMapper.class).to(RuntimeExceptionMapper.class);

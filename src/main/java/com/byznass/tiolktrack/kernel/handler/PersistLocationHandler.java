@@ -15,17 +15,20 @@ public class PersistLocationHandler {
 
 	private final LocationPersister locationPersister;
 	private final GpsProvider gpsProvider;
+	private final CoordinateValidator coordinateValidator;
 
 	@Inject
-	public PersistLocationHandler(LocationPersister locationPersister, GpsProvider gpsProvider) {
+	public PersistLocationHandler(LocationPersister locationPersister, GpsProvider gpsProvider,
+								  CoordinateValidator coordinateValidator) {
 
 		this.locationPersister = locationPersister;
 		this.gpsProvider = gpsProvider;
+		this.coordinateValidator = coordinateValidator;
 	}
 
 	public Location persist(Location location) {
 
-		//TODO(TT-31) add validation of latitude and longitude
+		coordinateValidator.validate(location);
 
 		LOGGER.info("Persisting location for GPS entity (\'{},{}\')", location.getUserId(), location.getGpsName());
 		checkIfGpsExists(location.getUserId(), location.getGpsName());
