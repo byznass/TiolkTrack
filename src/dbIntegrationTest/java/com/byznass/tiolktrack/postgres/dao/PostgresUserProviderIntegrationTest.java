@@ -1,7 +1,7 @@
 package com.byznass.tiolktrack.postgres.dao;
 
-import com.byznass.tiolktrack.kernel.model.User;
 import com.byznass.tiolktrack.DatabaseIntegrationTest;
+import com.byznass.tiolktrack.kernel.model.User;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -18,8 +18,7 @@ public class PostgresUserProviderIntegrationTest extends DatabaseIntegrationTest
 	@Before
 	public void setUp() {
 
-		Connection connection = integrationConnectionFactory.getConnection();
-		postgresUserProvider = new PostgresUserProvider(connection);
+		postgresUserProvider = new PostgresUserProvider(integrationConnectionFactory);
 	}
 
 	@Test

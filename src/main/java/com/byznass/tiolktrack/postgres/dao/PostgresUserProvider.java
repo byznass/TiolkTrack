@@ -4,6 +4,7 @@ import com.byznass.tiolktrack.kernel.TiolkTrackException;
 import com.byznass.tiolktrack.kernel.dao.NoUserWithSuchIdException;
 import com.byznass.tiolktrack.kernel.dao.UserProvider;
 import com.byznass.tiolktrack.kernel.model.User;
+import com.byznass.tiolktrack.postgres.ConnectionProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -17,12 +18,12 @@ public class PostgresUserProvider implements UserProvider {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(PostgresUserProvider.class);
 
-	private final Connection connection;
+	private final ConnectionProvider connectionProvider;
 
 	@Inject
-	public PostgresUserProvider(Connection connection) {
+	public PostgresUserProvider(ConnectionProvider connectionProvider) {
 
-		this.connection = connection;
+		this.connectionProvider = connectionProvider;
 	}
 
 
@@ -32,7 +33,9 @@ public class PostgresUserProvider implements UserProvider {
 		LOGGER.info("Retrieving User with userId=\"{}\" from postgres database", userId);
 
 		String query = "SELECT * FROM client WHERE id=?";
-		try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+		try (Connection connection = connectionProvider.getConnection();
+			 PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+
 			preparedStatement.setString(1, userId);
 
 			return extractUser(userId, preparedStatement);
