@@ -3,6 +3,7 @@ package com.byznass.tiolktrack.postgres.dao;
 import com.byznass.tiolktrack.kernel.TiolkTrackException;
 import com.byznass.tiolktrack.kernel.dao.GpsPersister;
 import com.byznass.tiolktrack.kernel.model.gps.Gps;
+import com.byznass.tiolktrack.postgres.ConnectionProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,12 +16,12 @@ public class PostgresGpsPersister implements GpsPersister {
 
 	private static final Logger LOGGER = LoggerFactory.getLogger(PostgresGpsPersister.class);
 
-	private final Connection connection;
+	private final ConnectionProvider connectionProvider;
 
 	@Inject
-	public PostgresGpsPersister(Connection connection) {
+	public PostgresGpsPersister(ConnectionProvider connectionProvider) {
 
-		this.connection = connection;
+		this.connectionProvider = connectionProvider;
 	}
 
 	@Override
@@ -29,7 +30,8 @@ public class PostgresGpsPersister implements GpsPersister {
 		LOGGER.info("Persisting a new GPS entity (\'{},{}\').", gps.getUserId(), gps.getName());
 
 		String query = "INSERT INTO gps (clientId, name) VALUES(?, ?);";
-		try (PreparedStatement preparedStatement = connection.prepareStatement(query)) {
+		try (Connection connection = connectionProvider.getConnection();
+			 PreparedStatement preparedStatement = connection.prepareStatement(query)) {
 			preparedStatement.setString(1, gps.getUserId());
 			preparedStatement.setString(2, gps.getName());
 

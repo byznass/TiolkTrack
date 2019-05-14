@@ -23,7 +23,6 @@ import com.byznass.tiolktrack.postgres.dao.*;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 
 import javax.inject.Singleton;
-import java.sql.Connection;
 
 public class TiolkTrackBinder extends AbstractBinder {
 
@@ -86,7 +85,5 @@ public class TiolkTrackBinder extends AbstractBinder {
 		bind(PropertyProvider.class).to(PropertyProvider.class);
 		bind(com.byznass.tiolktrack.postgres.ConnectionFactory.class).to(ConnectionProvider.class);
 		bind(SystemTimeProvider.class).to(TimeProvider.class);
-
-		bindFactory(ConnectionFactory.class).to(Connection.class);
 	}
 }
